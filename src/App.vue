@@ -48,22 +48,47 @@
           </v-col>
           </v-row>
         </v-container>
-        <v-snackbar :timeout="tips.timeout" :top="tips.top" :bottom="tips.bottom" :left="tips.left" :right="tips.right" v-model="tips.snackbar">{{tips.content}}
-          <v-btn flat class="pink--text" @click.native="tips.snackbar = false">Close</v-btn>
-        </v-snackbar>
       </v-card-text>
     </v-card>
-    <v-tabs id="subtopicPart" scroll-bars>
-      <v-tab-item v-for="i in subTopicList.length" v-bind:href="'#subtopicPart-' + i" slot="activators">
-       <span v-if='subTopicList[i-1]'>{{subTopicList[i-1]}}</span>
-       <span v-else><v-icon class="white--text text--darken-2" style="vertical-align:middle;">add</v-icon><i>订阅主题</i></span>
+    <v-card id="subtopicPart">
+    <v-tabs scroll-bars>
+      <v-tab-item v-for="i in subscriptions.length" v-bind:href="'#subtopicPart-' + i" slot="activators">
+       <span v-if='subscriptions[i-1]'>{{subscriptions[i-1].subTopic}}</span>
+       <span v-else><v-icon class="white--text text--darken-2" style="vertical-align:middle; font-size:24px;">add</v-icon><i  style="vertical-align:middle;">Subscribe Topics</i></span>
       </v-tab-item>
-      <v-tab-content v-for="i in subTopicList.length" v-bind:id="'subtopicPart-' + i" slot="content">
+      <v-tab-content v-for="i in subscriptions.length" v-bind:id="'subtopicPart-' + i" slot="content" style="height:auto;">
         <v-card>
-          <v-card-text>{{ subTopicList[i-1] }}</v-card-text>
+          <v-card-text v-if='subscriptions[i-1]'>{{ subscriptions[i-1].message }}</v-card-text>
+          <v-card-text v-else>
+          <h4>Subscription</h4>
+            <v-container fluid>
+              <v-row>
+            <v-col xs4>
+              <label>Subscription{{subscriptions.length}}</label>
+              <input v-model="subTopic" />
+          </v-col>
+          <v-col xs4>
+            <label>Qos</label>
+            <v-select v-bind:items="subQosStatue" v-model="subQos" light single-line />
+          </v-col>
+          <v-col xs4>
+            <v-btn primary dark class="subscribeBtn" v-on:click.native="mqttSubscribe">Subscribe</v-btn>
+          </v-col>
+          </v-row>
+            </v-container>
+          </v-card-text>
         </v-card>
       </v-tab-content>
       </v-tabs>
+    </v-card>
+    <v-card>
+      <div>
+        
+      </div>
+    </v-card>
+    <v-snackbar :timeout="tips.timeout" :top="tips.top" :bottom="tips.bottom" :left="tips.left" :right="tips.right" class="multiline" v-model="tips.snackbar" >{{tips.content}}
+      <v-btn flat class="pink--text" @click.native="tips.snackbar = false">Close</v-btn>
+    </v-snackbar>
   </main>
   <v-footer>publish</v-footer>
 </v-app>
@@ -72,6 +97,7 @@
 <script>
 import NProgress from 'nprogress'
 import mqtt from 'mqtt'
+import dateformat from 'dateformat'
 
 export default {
   name: 'websocket-view',
@@ -86,14 +112,26 @@ export default {
       clean: true,
       clientId: `mqttjs_${Math.random().toString(16).substr(2, 10)}`,
       subTopic: '/World',
-      subQos: 0,
+      subQos: {text: 0, value: 0},
       publishTopic: '/World',
       publishQos: 0,
       publishMessage: 'Hello world!',
       publishRetain: false,
       receivedMessages: [],
       publishedMessages: [],
-      subscriptions: [],
+      subscriptions: ["",
+        {
+          subTopic:"topic1",
+          qos:0,
+          time:"2017/09/21",
+          message:"lalallal",
+        }, {
+          subTopic:"topic2",
+          qos:1,
+          time:"2017/09/25",
+          message:"666666",
+        },
+      ],
       client: {},
       connectPartCtl:false,
       tips: {
@@ -105,11 +143,17 @@ export default {
         left:false,
         right:true,
       },
-      subTopicList:['','topic1','topic2'],
-      subTopicMessage:['0','message1','message2']
+      subQosStatue:[
+        {value: 0, text: 0},
+        {value: 1, text: 1},
+        {value: 2, text: 2},
+      ],
     }
   },
   methods: {
+    now() {
+      return dateformat(new Date(), 'yyyy-mm-dd hh:MM:ss')
+    },
     mqttConnect() {
       NProgress.start()
       const options = {
@@ -122,11 +166,9 @@ export default {
         const this_ =this;
       this.client = mqtt.connect(`ws://${this.host}:${this.port}/mqtt`, options)
       this.client.on('connect', () => {
-        console.log("ok");
         this.tips.content="连接成功！"
         //this.tips.snackbar=true
         this_.tips.snackbar=true;
-        console.log(this_.tips);
         NProgress.done()
       })
       this.client.on('error', (error) => {
@@ -160,7 +202,32 @@ export default {
     },
     toggleConnectPart() {
       this.connectPartCtl=!this.connectPartCtl;
-    }
+    },
+    mqttSubscribe() {
+      if (this.client.connected) {
+        NProgress.start()
+        this.client.subscribe(this.subTopic, { qos: this.subQos.value }, (error) => {
+          if (error) {
+            NProgress.done()
+            this.tips.content=error
+            this.tips.snackbar=true
+          } else {
+            this.subscriptions.push({
+              subTopic: this.subTopic,
+              qos: this.subQos,
+              time: this.now(),
+            })
+            console.log(this.subscriptions)
+            this.tips.content="订阅成功！"
+            this.tips.snackbar=true
+            NProgress.done()
+          }
+        })
+      } else {
+        this.tips.content="连接以后才能订阅"
+        this.tips.snackbar=true
+      }
+    },
   },
 }
 </script>
@@ -184,20 +251,36 @@ export default {
   .row{
     margin-bottom:.5rem;
   }
-  #connectInfo label{
+  #connectInfo label ,#subtopicPart label{
     display:block;
     color:#4d4d4d;
   }
-  #connectInfo input{
+  #connectInfo input ,#subtopicPart input{
     width: 100%;
     padding: 6px;
     border: 1px solid #ddd;
     background: #fff;
     margin: 4px 0;
   }
-  .connectBtn{
+  .connectBtn, .subscribeBtn{
   margin-top: 25px;
     height: 34px;
     margin-bottom: 0;
+  }
+  #subtopicPart .input-group{
+    margin: 0;
+  }
+  #subtopicPart .tabs,#subtopicPart .tabs__items{
+    height: 100%;
+  }
+  #subtopicPart .input-group__input{
+    width: 100%;
+    padding: 2px 6px;
+    border: 1px solid #ddd;
+    background: #fff;
+    margin: 4px 0;
+  }
+  .input-group__details{
+    display: none;
   }
 </style>
