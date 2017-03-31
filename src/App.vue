@@ -2,7 +2,7 @@
   <v-app top-toolbar footer>
     <v-toolbar>
       <v-toolbar-title>MQTT</v-toolbar-title>
-      <p v-if="client.connected" class="linkTip">已连接至 {{host}}</p>
+      <p v-if="client.connected" class="linkTip">Connected to&nbsp;{{host}}</p>
       <v-btn icon dark v-if="client.connected" @click.native="toggleConnectPart">
         <v-icon class="white--text text--darken-2">link</v-icon>
       </v-btn>
@@ -55,10 +55,10 @@
           <v-col xs3 class="tabs-tab">
               <ul>
                 <li v-bind:class="{active:(activeStatus=='addtopic')}">
-                  <a v-on:click="tabToggle('addtopic')"><i class="" style="vertical-align:middle;">Subscribe Topics</i><v-icon class="blue--text text--darken-2">add</v-icon></a>
+                  <a v-on:click="tabToggle('addtopic')"><i class="" style="vertical-align:middle;font-weight:bold;">Subscribe Topics</i><v-icon class="blue--text text--darken-2">add</v-icon></a>
                   
                 </li>
-                <li v-for="(item,index) in subscriptions" v-bind:class="{active:(activeStatus==item.subTopic)}"><a v-on:click="tabToggle(item.subTopic)">{{item.subTopic}}
+                <li v-for="(item,index) in subscriptions" v-bind:class="{active:(activeStatus==index)}"><a v-on:click="tabToggle(index)">{{item.subTopic}}
                 <v-btn icon dark @click.native="deleteTopic(index)">
                   <v-icon class="grey--text text--darken-2">clear</v-icon>
                 </v-btn></a>
@@ -85,7 +85,7 @@
                     </v-row>
                   </v-container>
                 </li>
-                <li v-for="items in subscriptions" v-show="activeStatus==items.subTopic">
+                <li v-for="(items,index) in subscriptions" v-show="activeStatus==index">
                   <v-card class="grey  lighten-4" v-for="messages in receivedMessages" v-show="messages.topic==items.subTopic">
                     <v-card-text>
                       <p style="overflow:hidden;"><span>Qos : {{messages.qos}}</span><span class="grey--text" style="float:right;">{{messages.time}}</span></p>
@@ -97,7 +97,7 @@
           </v-col>
         </v-row>
       </v-card>
-      <v-card id="sendmessage">
+      <v-card id="sendmessage" v-if="client.connected">
         <v-card-text style="padding-right:7px;">
           <v-row style="margin-bottom:0;">
             <v-col xs6 style="padding-right:16px;">
@@ -188,12 +188,10 @@ export default {
         subTopic: "topic1",
         qos: 0,
         time: "2017/09/21",
-        message: "lalallal",
       }, {
         subTopic: "flower",
         qos: 1,
         time: "2017/09/25",
-        message: "666666",
       }, ],
       client: {},
       connectPartCtl: false,
@@ -236,13 +234,13 @@ export default {
       const this_ = this;
       this.client = mqtt.connect(`ws://${this.host}:${this.port}/mqtt`, options)
       this.client.on('connect', () => {
-        this.tips.content = "连接成功！"
+        this.tips.content = "It's connected！"
           //this.tips.snackbar=true
         this_.tips.snackbar = true;
         NProgress.done()
       })
       this.client.on('error', (error) => {
-        this.tips.content = "连接失败"
+        this.tips.content = "Connection failure!"
         this.tips.snackbar = true
         NProgress.done()
       })
@@ -261,12 +259,13 @@ export default {
         this.client.end()
         this.client.on('close', () => {
           this.client.connected = false
-          this.tips.content = "已断开连接！"
+          this.tips.content = "It's disconnected！"
           this.tips.snackbar = true
           NProgress.done()
         })
+        this.connectPartCtl=false;
       } else {
-        this.tips.content = "操作失败！"
+        this.tips.content = "Operation failure！"
         this.tips.snackbar = true
       }
     },
@@ -284,23 +283,35 @@ export default {
             this.tips.content = error
             this.tips.snackbar = true
           } else {
-            this.subscriptions.push({
-              subTopic: this.subTopic,
-              qos: this.subQos.value,
-              time: this.now(),
-            })
-            this.tips.content = "订阅成功！"
+            let coverIndex=0;
+            for (let i = 0; i < this.subscriptions.length; i++) {
+              if(this.subscriptions[i].subTopic==this.subTopic){
+                coverIndex=i;
+                break;
+              }
+            }
+            if(coverIndex==0){
+              this.subscriptions.push({
+                subTopic: this.subTopic,
+                qos: this.subQos.value,
+                time: this.now(),
+              })
+            }else{
+              this.subscriptions[coverIndex].qos=this.subQos.value;
+              this.subscriptions[coverIndex].time=this.now();
+            }
+            this.tips.content = "Subscription successful!"
             this.tips.snackbar = true
             NProgress.done()
           }
         })
       } else {
-        this.tips.content = "连接以后才能订阅"
+        this.tips.content = "Please connect!"
         this.tips.snackbar = true
       }
     },
-    tabToggle(tabName) {
-      this.activeStatus=tabName;
+    tabToggle(tabIndex) {
+      this.activeStatus=tabIndex;
     },
     deleteTopic(curIndex){
       this.subscriptions.splice(curIndex,1);
@@ -321,13 +332,13 @@ export default {
               qos: this.publishQos.value,
               time: this.now(),
             })
-            this.tips.content = "消息发送成功!"
+            this.tips.content = "It's a success!"
             this.tips.snackbar = true
             NProgress.done()
           }
         })
       } else {
-        this.tips.content = "连接成功后才能发布消息!"
+        this.tips.content = "Please connect!"
         this.tips.snackbar = true
       }
     },
@@ -354,8 +365,12 @@ main {
 
 .card {
   width: 100%;
+  margin-bottom: 1rem;
 }
 
+main > .card{
+  margin-bottom: 2rem;
+}
 .row {
   margin-bottom: .5rem;
 }
@@ -447,8 +462,5 @@ input {
 }
 #subscription .tabs-item ul{
   padding: 10px;
-}
-.card{
-  margin-bottom: 1rem;
 }
 </style>
