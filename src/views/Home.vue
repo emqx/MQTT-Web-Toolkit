@@ -1,72 +1,84 @@
 <template>
   <div class="home-view">
-  <v-app top-toolbar footer>
-    <v-toolbar>
-      <v-toolbar-title>MQTT</v-toolbar-title>
-      <p v-if="client.connected" class="linkTip">Connected to&nbsp;{{host}}</p>
-      <v-btn icon dark v-if="client.connected" @click.native="toggleConnectPart">
-        <v-icon class="white--text text--darken-2">link</v-icon>
-      </v-btn>
-    </v-toolbar>
-    <main>
-      <v-card id="connectInfo" v-if="!client.connected||connectPartCtl" class="grey lighten-4">
-        <v-card-text>
-          <h4>Connection</h4>
-          <v-container fluid>
-            <v-row>
-              <v-col xs4>
-                <label>Host</label>
-                <input v-model="host" />
-              </v-col>
-              <v-col xs2>
-                <label>Port</label>
-                <input v-model="port" />
-              </v-col>
-              <v-col xs4>
-                <label>Client ID</label>
-                <input v-model="clientId" />
-              </v-col>
-              <v-col xs2>
-                <v-btn primary dark class="connect-btn" v-if="!client.connected" v-on:click.native="mqttConnect">Connect</v-btn>
-                <v-btn primary dark class="connect-btn" v-if="client.connected" v-on:click.native="mqttDisconnect">Disconnect</v-btn>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col xs3>
-                <label>User Name</label>
-                <input v-model="username" />
-              </v-col>
-              <v-col xs3>
-                <label>Password</label>
-                <input v-model="password" />
-              </v-col>
-              <v-col xs2>
-                <label>Keep Alive</label>
-                <input v-model="keepalive" />
-              </v-col>
-              <v-col xs2>
-                <v-checkbox label="Clean Session" v-model="clean" primary light style="height: 30px; margin-top: 26px;" />
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card-text>
-      </v-card>
-      <v-card id="subscription" v-if="client.connected">
-        <v-row>
-          <v-col xs3 class="tabs-tab">
+    <v-app top-toolbar footer>
+      <v-toolbar>
+        <v-toolbar-title>MQTT</v-toolbar-title>
+        <p v-if="client.connected" class="linkTip">Connected to&nbsp;{{host}}</p>
+        <v-menu offset-y>
+          <v-btn icon dark v-if="client.connected" slot="activator">
+            <v-icon class="white--text text--darken-2">arrow_drop_down</v-icon>
+          </v-btn>
+          <v-list>
+            <v-list-item v-for="item in menuitems" :key="item">
+              <v-list-tile @click.native="menu(item.type)">
+                <v-list-tile-title>{{ item.text }}</v-list-tile-title>
+              </v-list-tile>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </v-toolbar>
+      <main>
+        <v-card id="connectInfo" v-if="!client.connected||connectPartCtl" class="grey lighten-4">
+          <v-card-text>
+            <h4>Connection</h4>
+            <v-container fluid>
+              <v-row>
+                <v-col xs4>
+                  <label>Host</label>
+                  <input v-model="host" />
+                </v-col>
+                <v-col xs2>
+                  <label>Port</label>
+                  <input v-model="port" />
+                </v-col>
+                <v-col xs4>
+                  <label>Client ID</label>
+                  <input v-model="clientId" />
+                </v-col>
+                <v-col xs2>
+                  <v-btn primary dark class="connect-btn" v-if="!client.connected" v-on:click.native="mqttConnect">Connect</v-btn>
+                  <v-btn primary dark class="connect-btn" v-if="client.connected" v-on:click.native="mqttDisconnect">Disconnect</v-btn>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col xs3>
+                  <label>User Name</label>
+                  <input v-model="username" />
+                </v-col>
+                <v-col xs3>
+                  <label>Password</label>
+                  <input v-model="password" />
+                </v-col>
+                <v-col xs2>
+                  <label>Keep Alive</label>
+                  <input v-model="keepalive" />
+                </v-col>
+                <v-col xs2>
+                  <v-checkbox label="Clean Session" v-model="clean" primary light style="height: 30px; margin-top: 26px;" />
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card-text>
+        </v-card>
+        <v-card id="subscription" v-if="client.connected">
+          <v-row>
+            <v-col xs3 class="tabs-tab">
               <ul>
                 <li v-bind:class="{active:(activeStatus=='addtopic')}">
                   <a v-on:click="tabToggle('addtopic')"><i class="" style="vertical-align:middle;font-weight:bold;">Subscribe Topics</i><v-icon class="blue--text text--darken-2">add</v-icon></a>
-                  
                 </li>
-                <li v-for="(item,index) in subscriptions" v-bind:class="{active:(activeStatus==index)}"><a v-on:click="tabToggle(index)">{{item.subTopic}}
-                <v-btn icon dark @click.native="deleteTopic(index)">
-                  <v-icon class="grey--text text--darken-2">clear</v-icon>
-                </v-btn></a>
+                <li v-for="(item,index) in subscriptions" v-bind:class="{active:(activeStatus==index)}">
+                  <a v-on:click="tabToggle(index)">
+                    <i v-if="item.news" class="pink--text" style="margin-right:4px;font-style:normal;">•</i>
+                    {{item.subTopic}}
+                  </a>
+                  <v-btn icon dark @click.native="deleteTopic(index)">
+                    <v-icon class="grey--text text--darken-2">clear</v-icon>
+                  </v-btn>
                 </li>
               </ul>
-          </v-col>
-          <v-col xs9 class="tabs-item">
+            </v-col>
+            <v-col xs9 class="tabs-item">
               <ul>
                 <li v-show="activeStatus=='addtopic'">
                   <h4>Subscription</h4>
@@ -87,7 +99,7 @@
                   </v-container>
                 </li>
                 <li v-for="(items,index) in subscriptions" v-show="activeStatus==index">
-                  <v-card class="grey  lighten-4" v-for="messages in receivedMessages" v-show="messages.topic==items.subTopic">
+                  <v-card class="grey  lighten-4" v-for="messages in receivedMessages" v-show="messages.topic==items.subTopic" :key="messages.topic">
                     <v-card-text>
                       <p style="overflow:hidden;"><span>Qos : {{messages.qos}}</span><span class="grey--text" style="float:right;">{{messages.time}}</span></p>
                       <p style="font-size:18px;margin-bottom:0;">{{messages.message}}</p>
@@ -95,58 +107,53 @@
                   </v-card>
                 </li>
               </ul>
-          </v-col>
-        </v-row>
-      </v-card>
-      <v-card id="sendmessage" v-if="client.connected">
-        <v-card-text style="padding-right:7px;">
-          <v-row style="margin-bottom:0;">
-            <v-col xs6 style="padding-right:16px;">
-              <h5>Send Message</h5>
-              <v-row>
-                <v-col xs6>
-                  <label>Topic</label>
-                  <input v-model="publishTopic" />
-                </v-col>
-                <v-col xs6>
-                  <label>Qos</label>
-                  <v-select class="selector" v-bind:items="subQosStatue" v-model="publishQos" light single-line />
-                </v-col>
-              </v-row>
-              <label>Message</label>
-              <input v-model="publishMessage" />
-              <v-row>
-                <v-col xs6>
-                  <v-checkbox label="Retained" v-model="publishRetain" primary light style="height: 30px; margin-top: 10px;" />
-                </v-col>
-                <v-col xs6>
-                  <v-btn primary dark class="sendmessage-btn" style="float:right; margin-right:0;" v-on:click.native="mqttPublish">send message</v-btn>
-                </v-col>
-              </v-row>
-            </v-col>
-            <v-col xs6 class="grey lighten-4" style="margin:-16px 0;height:320px;overflow-y:scroll;padding:16px;">
-              <v-card class="" v-for="messages in publishedMessages">
-                <v-card-text>
-                  <p style="overflow:hidden;"><span class="pink--text text--darken-2">[{{messages.topic}}]</span>&nbsp;<span>Qos : {{messages.qos}}</span><span class="grey--text" style="float:right;">{{messages.time}}</span></p>
-                  <p style="font-size:18px;margin-bottom:0;">{{messages.message}}</p>
-                </v-card-text>
-              </v-card>
             </v-col>
           </v-row>
-        </v-card-text>
-      </v-card>
-      <v-snackbar :timeout="tips.timeout" :top="tips.top" :bottom="tips.bottom" :left="tips.left" :right="tips.right" class="multiline" v-model="tips.snackbar">{{tips.content}}
-        <v-btn flat class="pink--text" @click.native="tips.snackbar = false">Close</v-btn>
-      </v-snackbar>
-    </main>
-    <v-footer>publish</v-footer>
-  </v-app>
-
+        </v-card>
+        <v-card id="sendmessage" v-if="client.connected">
+          <v-card-text style="padding-right:7px;">
+            <v-row style="margin-bottom:0;">
+              <v-col xs6 style="padding-right:16px;">
+                <h5>Send Message</h5>
+                <v-row>
+                  <v-col xs6>
+                    <label>Topic</label>
+                    <input v-model="publishTopic" />
+                  </v-col>
+                  <v-col xs6>
+                    <label>Qos</label>
+                    <v-select class="selector" v-bind:items="subQosStatue" v-model="publishQos" light single-line />
+                  </v-col>
+                </v-row>
+                <label>Message</label>
+                <input v-model="publishMessage" />
+                <v-row>
+                  <v-col xs6>
+                    <v-checkbox label="Retained" v-model="publishRetain" primary light style="height: 30px; margin-top: 10px;" />
+                  </v-col>
+                  <v-col xs6>
+                    <v-btn primary dark class="sendmessage-btn" style="float:right; margin-right:0;" v-on:click.native="mqttPublish">send message</v-btn>
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col xs6 class="grey lighten-4" style="margin:-16px 0;height:320px;overflow-y:scroll;padding:16px;">
+                <v-card class="" v-for="messages in publishedMessages" :key="messages.topic">
+                  <v-card-text>
+                    <p style="overflow:hidden;"><span class="pink--text text--darken-2">[{{messages.topic}}]</span>&nbsp;<span>Qos : {{messages.qos}}</span><span class="grey--text" style="float:right;">{{messages.time}}</span></p>
+                    <p style="font-size:18px;margin-bottom:0;">{{messages.message}}</p>
+                  </v-card-text>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
+        <v-snackbar :timeout="tips.timeout" :top="tips.top" :bottom="tips.bottom" :left="tips.left" :right="tips.right" class="multiline" v-model="tips.snackbar">{{tips.content}}
+          <v-btn flat class="pink--text" @click.native="tips.snackbar = false">Close</v-btn>
+        </v-snackbar>
+      </main>
+    </v-app>
   </div>
 </template>
-
-
-
 <script>
 import NProgress from 'nprogress'
 import mqtt from 'mqtt'
@@ -176,36 +183,14 @@ export default {
       },
       publishMessage: 'Hello world!',
       publishRetain: false,
-      receivedMessages: [
-        {
-          topic: 'flower',
-          message: 'boomshakalaka',
-          qos: '2',
-          time: '2017-3-30',
-        }, {
-          topic: 'flower',
-          message: 'live live live',
-          qos: '0',
-          time: '2017-3-30 9:19:38',
-        },
-      ],
+      receivedMessages: [],
       publishedMessages: [],
-      subscriptions: [
-        {
-          subTopic: 'topic1',
-          qos: 0,
-          time: '2017/09/21',
-        }, {
-          subTopic: 'flower',
-          qos: 1,
-          time: '2017/09/25',
-        },
-      ],
+      subscriptions: [],
       client: {},
       connectPartCtl: false,
       tips: {
         snackbar: false,
-        timeout: 6000,
+        timeout: 2000,
         content: '',
         top: true,
         bottom: false,
@@ -225,6 +210,15 @@ export default {
         },
       ],
       activeStatus: 'addtopic',
+      menuitems: [
+        {
+          text: 'Disconnect',
+          type: 'disconnect',
+        }, {
+          text: 'Clear All Message',
+          type: 'clearall',
+        },
+      ],
     }
   },
   methods: {
@@ -244,7 +238,7 @@ export default {
       this.client.on('connect', () => {
         this.tips.content = 'Connected！'
         this.tips.snackbar = true
-        // this_.tips.snackbar = true;
+          // this_.tips.snackbar = true;
         NProgress.done()
       })
       this.client.on('error', () => {
@@ -258,6 +252,11 @@ export default {
           message: message.toString(),
           qos: packet.qos,
           time: this.now(),
+        })
+        this.subscriptions.forEach((element) => {
+          if (element.subTopic === topic) {
+            element.news = true
+          }
         })
       })
     },
@@ -291,17 +290,18 @@ export default {
             this.tips.content = error
             this.tips.snackbar = true
           } else {
-            let coverIndex = 0
+            let coverIndex = -1
             this.subscriptions.forEach((element, index) => {
               if (element.subTopic === this.subTopic) {
                 coverIndex = index
               }
             })
-            if (coverIndex === 0) {
+            if (coverIndex === -1) {
               this.subscriptions.push({
                 subTopic: this.subTopic,
                 qos: this.subQos.value,
                 time: this.now(),
+                news: false,
               })
             } else {
               this.subscriptions[coverIndex].qos = this.subQos.value;
@@ -319,6 +319,9 @@ export default {
     },
     tabToggle(tabIndex) {
       this.activeStatus = tabIndex
+      if (tabIndex !== 'addtopic') {
+        this.subscriptions[tabIndex].news = false
+      }
     },
     deleteTopic(curIndex) {
       this.subscriptions.splice(curIndex, 1)
@@ -326,7 +329,10 @@ export default {
     mqttPublish() {
       if (this.client.connected) {
         NProgress.start()
-        const options = { qos: this.publishQos.value, retain: this.publishRetain }
+        const options = {
+          qos: this.publishQos.value,
+          retain: this.publishRetain,
+        }
         this.client.publish(this.publishTopic, this.publishMessage, options, (error) => {
           if (error) {
             NProgress.done()
@@ -349,13 +355,25 @@ export default {
         this.tips.snackbar = true
       }
     },
+    clearMessage() {
+      this.receivedMessages = []
+      this.publishedMessages = []
+    },
+    menu(type) {
+      switch (type) {
+        case 'disconnect':
+          this.mqttDisconnect();
+          break;
+        case 'clearall':
+          this.clearMessage();
+          break;
+        default:
+          break;
+      }
+    },
   },
 }
 </script>
-
-
-
-
 <style>
 a {
   color: #424242;
@@ -369,6 +387,7 @@ main {
 .linkTip {
   margin: 0;
   color: #fff;
+  margin-right: 10px;
 }
 
 .card {
@@ -376,9 +395,10 @@ main {
   margin-bottom: 1rem;
 }
 
-main > .card{
+main > .card {
   margin-bottom: 2rem;
 }
+
 .row {
   margin-bottom: .5rem;
 }
@@ -418,12 +438,16 @@ input {
 .input-group__details {
   display: none;
 }
-#connectInfo{
-/*  margin-bottom: 20px; 
-*/}
+
+#connectInfo {
+  /*  margin-bottom: 20px; 
+*/
+}
+
 #subscription li {
   list-style: none;
 }
+
 #subscription .tabs-tab {
   /*text-align: center;*/
   height: 320px;
@@ -432,43 +456,52 @@ input {
   padding-right: 0;
   border-right: 1px solid #ddd;
 }
+
 #subscription .tabs-item {
   height: 320px;
   overflow-x: hidden;
   overflow-y: scroll;
 }
-#subscription .tabs-tab a{
+
+#subscription .tabs-tab a {
   display: block;
   cursor: pointer;
+  margin-right: 20px;
 }
+
 #subscription .tabs-tab ul {
   font-size: 16px;
 }
-#subscription .tabs-tab ul li{
+
+#subscription .tabs-tab ul li {
   position: relative;
   height: 45px;
   line-height: 45px;
-  padding: 0 10px;
+  padding: 0 16px;
 }
-#subscription .tabs-tab ul li.active{
+
+#subscription .tabs-tab ul li.active {
   background: #f9f9f9;
   border-left: 3px solid #39f;
   color: #1976d2;
 }
-#subscription .tabs-tab .icon{
+
+#subscription .tabs-tab .icon {
   position: absolute;
   font-size: 20px;
   right: 10px;
   top: 50%;
   margin-top: -10px;
 }
-#subscription .tabs-tab .btn{
+
+#subscription .tabs-tab .btn {
   position: absolute;
   right: -5px;
   top: 50%;
   margin-top: -18px;
 }
-#subscription .tabs-item ul{
+
+#subscription .tabs-item ul {
   padding: 10px;
 }
 </style>
