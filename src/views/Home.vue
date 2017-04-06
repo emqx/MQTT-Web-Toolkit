@@ -4,18 +4,8 @@
       <v-toolbar>
         <v-toolbar-title>MQTT</v-toolbar-title>
         <p v-if="client.connected" class="linkTip">Connected to&nbsp;{{host}}</p>
-        <v-menu offset-y>
-          <v-btn icon dark v-if="client.connected" slot="activator">
-            <v-icon class="white--text text--darken-2">arrow_drop_down</v-icon>
-          </v-btn>
-          <v-list>
-            <v-list-item v-for="item in menuitems" :key="item">
-              <v-list-tile @click.native="menu(item.type)">
-                <v-list-tile-title>{{ item.text }}</v-list-tile-title>
-              </v-list-tile>
-            </v-list-item>
-          </v-list>
-        </v-menu>
+        <v-btn class="pink darken-1" dark v-if="client.connected" @click.native="mqttDisconnect">Disconnect</v-btn>
+        <v-btn class="blue darken-1" dark v-if="client.connected" @click.native="clearMessage">Clear Message</v-btn>
       </v-toolbar>
       <main>
         <v-card id="connectInfo" v-if="!client.connected||connectPartCtl" class="grey lighten-4">
@@ -36,8 +26,7 @@
                   <input v-model="clientId" />
                 </v-col>
                 <v-col xs2>
-                  <v-btn primary dark class="connect-btn" v-if="!client.connected" v-on:click.native="mqttConnect">Connect</v-btn>
-                  <v-btn primary dark class="connect-btn" v-if="client.connected" v-on:click.native="mqttDisconnect">Disconnect</v-btn>
+                  <v-btn primary dark class="connect-btn" v-on:click.native="mqttConnect">Connect</v-btn>
                 </v-col>
               </v-row>
               <v-row>
@@ -99,7 +88,7 @@
                   </v-container>
                 </li>
                 <li v-for="(items,index) in subscriptions" v-show="activeStatus==index">
-                  <v-card class="grey  lighten-4" v-for="messages in receivedMessages" v-show="messages.topic==items.subTopic" :key="messages.topic">
+                  <v-card class="grey  lighten-4" v-for="(messages,index) in receivedMessages" v-show="messages.topic==items.subTopic" :key="messages.index">
                     <v-card-text>
                       <p style="overflow:hidden;"><span>Qos : {{messages.qos}}</span><span class="grey--text" style="float:right;">{{messages.time}}</span></p>
                       <p style="font-size:18px;margin-bottom:0;">{{messages.message}}</p>
@@ -137,7 +126,7 @@
                 </v-row>
               </v-col>
               <v-col xs6 class="grey lighten-4" style="margin:-16px 0;height:320px;overflow-y:scroll;padding:16px;">
-                <v-card class="" v-for="messages in publishedMessages" :key="messages.topic">
+                <v-card class="" v-for="(messages,index) in publishedMessages" :key="messages.index">
                   <v-card-text>
                     <p style="overflow:hidden;"><span class="pink--text text--darken-2">[{{messages.topic}}]</span>&nbsp;<span>Qos : {{messages.qos}}</span><span class="grey--text" style="float:right;">{{messages.time}}</span></p>
                     <p style="font-size:18px;margin-bottom:0;">{{messages.message}}</p>
@@ -195,7 +184,7 @@ export default {
         top: true,
         bottom: false,
         left: false,
-        right: true,
+        right: false,
       },
       subQosStatue: [
         {
@@ -210,15 +199,6 @@ export default {
         },
       ],
       activeStatus: 'addtopic',
-      menuitems: [
-        {
-          text: 'Disconnect',
-          type: 'disconnect',
-        }, {
-          text: 'Clear All Message',
-          type: 'clearall',
-        },
-      ],
     }
   },
   methods: {
@@ -247,7 +227,7 @@ export default {
         NProgress.done()
       })
       this.client.on('message', (topic, message, packet) => {
-        this.receivedMessages.push({
+        this.receivedMessages.unshift({
           topic,
           message: message.toString(),
           qos: packet.qos,
@@ -270,7 +250,10 @@ export default {
           this.tips.snackbar = true
           NProgress.done()
         })
-        this.connectPartCtl = false;
+        this.connectPartCtl = false
+        this.receivedMessages = []
+        this.publishedMessages = []
+        this.subscriptions = []
       } else {
         this.tips.content = 'Operation failure！'
         this.tips.snackbar = true
@@ -297,7 +280,7 @@ export default {
               }
             })
             if (coverIndex === -1) {
-              this.subscriptions.push({
+              this.subscriptions.unshift({
                 subTopic: this.subTopic,
                 qos: this.subQos.value,
                 time: this.now(),
@@ -324,6 +307,18 @@ export default {
       }
     },
     deleteTopic(curIndex) {
+      if (this.activeStatus === curIndex) {
+        if (curIndex === 0) {
+          this.activeStatus = 'addtopic'
+        } else {
+          this.activeStatus = this.activeStatus - 1
+        }
+      }
+      this.receivedMessages.forEach((element, index) => {
+        if (element.topic === this.subscriptions[curIndex].subTopic) {
+          this.receivedMessages.splice(index, 1)
+        }
+      })
       this.subscriptions.splice(curIndex, 1)
     },
     mqttPublish() {
@@ -339,7 +334,7 @@ export default {
             this.tips.content = error
             this.tips.snackbar = true
           } else {
-            this.publishedMessages.push({
+            this.publishedMessages.unshift({
               message: this.publishMessage,
               topic: this.publishTopic,
               qos: this.publishQos.value,
@@ -359,18 +354,6 @@ export default {
       this.receivedMessages = []
       this.publishedMessages = []
     },
-    menu(type) {
-      switch (type) {
-        case 'disconnect':
-          this.mqttDisconnect();
-          break;
-        case 'clearall':
-          this.clearMessage();
-          break;
-        default:
-          break;
-      }
-    },
   },
 }
 </script>
@@ -387,7 +370,7 @@ main {
 .linkTip {
   margin: 0;
   color: #fff;
-  margin-right: 10px;
+  margin-right: 20px;
 }
 
 .card {
@@ -499,6 +482,7 @@ input {
   right: -5px;
   top: 50%;
   margin-top: -18px;
+  z-index: 1;
 }
 
 #subscription .tabs-item ul {
