@@ -218,7 +218,6 @@ export default {
       this.client.on('connect', () => {
         this.tips.content = 'Connected！'
         this.tips.snackbar = true
-          // this_.tips.snackbar = true;
         NProgress.done()
       })
       this.client.on('error', () => {
