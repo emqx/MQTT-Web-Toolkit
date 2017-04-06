@@ -203,7 +203,7 @@ export default {
   },
   methods: {
     now() {
-      return dateformat(new Date(), 'yyyy-mm-dd hh:MM:ss')
+      return dateformat(new Date(), 'yyyy-mm-dd HH:MM:ss')
     },
     mqttConnect() {
       NProgress.start()
@@ -254,6 +254,7 @@ export default {
         this.receivedMessages = []
         this.publishedMessages = []
         this.subscriptions = []
+        this.activeStatus = 'addtopic'
       } else {
         this.tips.content = 'Operation failure！'
         this.tips.snackbar = true
