@@ -160,12 +160,12 @@ export default {
       keepalive: 60,
       clean: true,
       clientId: `mqttjs_${Math.random().toString(16).substr(2, 10)}`,
-      subTopic: '/World',
+      subTopic: 'world',
       subQos: {
         text: 0,
         value: 0,
       },
-      publishTopic: '/World',
+      publishTopic: 'world',
       publishQos: {
         text: 0,
         value: 0,
