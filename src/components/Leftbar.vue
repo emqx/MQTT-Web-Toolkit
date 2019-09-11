@@ -1,12 +1,15 @@
 <template>
   <div class="leftbar">
     <LeftbarTop/>
+    <LeftbarConnections/>
+    <a href="javascript:;" class="new-connection-btn">+ New Connection</a>
   </div>
 </template>
 
 
 <script>
-import LeftbarTop from './LeftbarTop.vue';
+import LeftbarTop from '@/components/LeftbarTop.vue'
+import LeftbarConnections from '@/components/LeftbarConnections.vue'
 
 export default {
   name: 'Leftbar',
@@ -15,6 +18,7 @@ export default {
   },
   components: {
     LeftbarTop,
+    LeftbarConnections,
   },
 };
 </script>
@@ -25,11 +29,22 @@ export default {
 
 .leftbar {
   position: fixed;
-  width: 300px;
+  width: $width-leftbar;
   top: 0;
   bottom: 0;
   overflow-x: hidden;
   z-index: 1000;
-  background-color: $color-black-bg;
+  background-color: $color-bg--black;
+  .new-connection-btn {
+    position: fixed;
+    bottom: 0;
+    width: $width-leftbar;
+    height: $height--new-connection-btn;
+    background-color: $color-main-green;
+    color: $color-font--white-title;
+    text-decoration: none;
+    line-height: $height--new-connection-btn;
+    text-align: center;
+  }
 }
 </style>

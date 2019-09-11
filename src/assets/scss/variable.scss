@@ -7,6 +7,15 @@ $font-size--send: 24px;
 
 $color-main-green: #34C388;
 $color-second-green: #08AB67;
-$color-white-font: #D6D7D9;
-$color-white-border: #696F7B;
-$color-black-bg: #333844;
+$color-font--white-default: #D6D7D9;
+$color-font--white-title: #fff;
+$color-font--white-tips: #999BA1;
+$color-border--white: #696F7B;
+$color-bg--black: #333844;
+$color-bg--black-active: #414859;
+$color-bg--connection-status: #70747C;
+
+
+$width-leftbar: 300px;
+$height--leftbar-top: 176px;
+$height--new-connection-btn: 48px;

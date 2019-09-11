@@ -22,7 +22,7 @@ export default {
   position: absolute;
   left: 0;
   right: 0;
-  margin-left: 300px;
+  margin-left: $width-leftbar;
   top: 40%;
   transform: translateY(-50%);
   -webkit-transform: translateY(-50%);
