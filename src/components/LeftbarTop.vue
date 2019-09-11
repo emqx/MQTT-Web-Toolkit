@@ -29,9 +29,12 @@ export default {
 @import '@/assets/scss/variable.scss';
 
 .leftbar-top {
+  position: fixed;
+  width: $width-leftbar;
   text-align: center;
-  height: 176px;
-  border-bottom: 1px solid $color-white-border;
+  height: $height--leftbar-top;
+  background-color: $color-bg--black;
+  border-bottom: 1px solid $color-border--white;
 
   .logo {
     padding-top: 24px;
@@ -54,7 +57,7 @@ export default {
   .links {
     margin-top: 24px;
     a {
-      color: $color-white-font;
+      color: $color-font--white-default;
       text-decoration: none;
       &:hover {
         color: $color-main-green;
