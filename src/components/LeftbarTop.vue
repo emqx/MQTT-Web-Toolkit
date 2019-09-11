@@ -1,6 +1,6 @@
 <template>
   <div class="leftbar-top">
-    <div class="logo">
+    <div class="logo" @click="linkToWebsite">
       <img src="@/assets/logo.svg">
       <div class="site-title">MQTT Web Toolkit</div>
     </div>
@@ -16,6 +16,11 @@
 <script>
 export default {
   name: 'LeftbarTop',
+  methods: {
+    linkToWebsite() {
+      window.open('https://emqx.io', '_blank')
+    },
+  },
 };
 </script>
 
@@ -25,23 +30,29 @@ export default {
 
 .leftbar-top {
   text-align: center;
-  height: 180px;
+  height: 176px;
   border-bottom: 1px solid $color-white-border;
 
   .logo {
-    margin-top: 20px;
+    padding-top: 24px;
     img {
-      width: 56px;
+      width: 52px;
     }
     .site-title {
       color: $color-main-green;
       margin-top: 6px;
-      font-size: $font-size--title;
+      font-size: $font-size--subtitle;
+    }
+    cursor: pointer;
+    &:hover {
+      .site-title {
+        color: $color-second-green;
+      }
     }
   }
 
   .links {
-    margin-top: 32px;
+    margin-top: 24px;
     a {
       color: $color-white-font;
       text-decoration: none;
