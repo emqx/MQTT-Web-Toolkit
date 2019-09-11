@@ -45,6 +45,7 @@ export default {
     text-decoration: none;
     line-height: $height--new-connection-btn;
     text-align: center;
+    font-size: $font-size--subtitle;
   }
 }
 </style>
