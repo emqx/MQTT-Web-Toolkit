@@ -14,13 +14,41 @@
         <el-radio-button label="Published"></el-radio-button>
       </el-radio-group>
     </div>
+    <div class="message-list">
+      <ConnectionMsgLeft
+        topic="/some/topic1"
+        payload="payload"
+        time="2019-09-32 12:32:11"/>
+      <ConnectionMsgLeft
+        topic="/some/topic1"
+        payload="payload"
+        time="2019-09-32 12:32:11"/>
+      <ConnectionMsgRight
+        topic="/some/topic1"
+        payload="payload"
+        time="2019-09-32 12:32:11"/>
+      <ConnectionMsgRight
+        topic="/some/topic1"
+        payload="payload"
+        time="2019-09-32 12:32:11"/>
+    </div>
+    <ConnectionMsgPublish/>
   </div>
 </template>
 
 
 <script>
+import ConnectionMsgLeft from '@/components/ConnectionMsgLeft.vue'
+import ConnectionMsgRight from '@/components/ConnectionMsgRight.vue'
+import ConnectionMsgPublish from '@/components/ConnectionMsgPublish.vue'
+
 export default {
   name: 'ConnectionContent',
+  components: {
+    ConnectionMsgLeft,
+    ConnectionMsgRight,
+    ConnectionMsgPublish,
+  },
   data() {
     return {
       messageType: 'All',
@@ -40,10 +68,11 @@ export default {
     right: 0;
   }
   .top-bar {
-    padding: 0 32px;
+    padding: 0 $spacing--connection-content;
     height: $height--connection-topbar;
     line-height: $height--connection-topbar;
     border-bottom: 1px solid $color-border--black;
+    background-color: #fff;
     .client-name {
       color: $color-font-black-title;
       font-size: $font-size--subtitle;
@@ -60,8 +89,9 @@ export default {
     }
   }
   .filter-bar {
-    padding: 16px 32px;
-    top: $height--connection-topbar;
+    padding: 16px $spacing--connection-content;
+    top: $height--connection-topbar + 1;
+    background-color: #fff;
     .el-button {
       font-size: 12px;
       width: 96px;
@@ -83,6 +113,9 @@ export default {
         border-width: 2px;
       }
     }
+  }
+  .message-list {
+    padding: 120px $spacing--connection-content;
   }
 }
 </style>
