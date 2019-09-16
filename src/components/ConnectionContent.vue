@@ -7,7 +7,7 @@
       </a>
     </div>
     <div class="filter-bar">
-      <el-button plain>+ New Sub</el-button>
+      <el-button plain @click="showSubscription=true">+ New Sub</el-button>
       <el-radio-group size="mini" v-model="messageType">
         <el-radio-button label="All"></el-radio-button>
         <el-radio-button label="Received"></el-radio-button>
@@ -33,6 +33,7 @@
         time="2019-09-32 12:32:11"/>
     </div>
     <ConnectionMsgPublish/>
+    <new-subscription :visible.sync="showSubscription"></new-subscription>
   </div>
 </template>
 
@@ -41,10 +42,12 @@
 import ConnectionMsgLeft from '@/components/ConnectionMsgLeft.vue'
 import ConnectionMsgRight from '@/components/ConnectionMsgRight.vue'
 import ConnectionMsgPublish from '@/components/ConnectionMsgPublish.vue'
+import NewSubscription from '@/components/NewSubscription.vue'
 
 export default {
   name: 'ConnectionContent',
   components: {
+    NewSubscription,
     ConnectionMsgLeft,
     ConnectionMsgRight,
     ConnectionMsgPublish,
@@ -52,6 +55,7 @@ export default {
   data() {
     return {
       messageType: 'All',
+      showSubscription: false,
     }
   },
 };
