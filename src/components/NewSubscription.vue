@@ -24,12 +24,12 @@
         </el-form-item>
       </el-form>
       <el-table border style="width: 100%" :data="subscriptions">
-        <el-table-column prop="topic" label="Topic" width="180"></el-table-column>
-        <el-table-column prop="qos" label="QoS" width="180"></el-table-column>
-        <el-table-column label="Oper">
+        <el-table-column prop="topic" label="Topic"></el-table-column>
+        <el-table-column prop="qos" label="QoS" width="80"></el-table-column>
+        <el-table-column label="Oper" width="56">
           <template slot-scope="scope">
             <a href="javascript:;" @click="unSubscribe(scope.row)">
-              <i class="iconfont icon-connect"></i>
+              <i class="iconfont icon-delete"></i>
             </a>
           </template>
         </el-table-column>
