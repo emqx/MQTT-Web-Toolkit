@@ -21,4 +21,8 @@ body {
 
 a {
   text-decoration: none;
+  color: $color-main-green;
+  &:hover {
+    color: $color-second-green;
+  }
 }

@@ -2,8 +2,11 @@
   <div class="connection-content">
     <div class="top-bar">
       <span class="client-name">Device XXX</span>
-      <a href="javascript:;" title="Disconenct">
-        <span class="iconfont icon-disconnect"></span>
+      <a href="javascript:;" class="disconnect-button">
+        <span class="iconfont icon-disconnect"></span>Disconnect
+      </a>
+      <a href="javascript:;">
+        <span class="iconfont icon-edit"></span>Edit
       </a>
     </div>
     <div class="filter-bar">
@@ -82,13 +85,16 @@ export default {
       font-size: $font-size--subtitle;
       font-weight: 500;
     }
-    .icon-disconnect {
-      font-weight: 600;
+    a {
       float: right;
-      font-size: $font-size--title;
-      color: $color-bg--black;
+      .iconfont {
+        margin-right: 4px;
+      }
+    }
+    .disconnect-button {
+      margin-left: 16px;
       &:hover {
-        color: $color-main-green;
+        color: $color-main-red;
       }
     }
   }

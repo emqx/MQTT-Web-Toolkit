@@ -14,7 +14,7 @@
     <slot></slot>
 
     <div slot="footer" class="dialog-footer" v-if="footer">
-      <el-button class="cancel" type="text" size="small" @click="hideDialog">Cancel</el-button>
+      <el-button class="cancel" type="text" size="small" @click="close">Cancel</el-button>
       <el-button
         class="confirm-button"
         type="text"
@@ -84,10 +84,6 @@ export default {
       // Close the dialog event
       this.$emit('close')
     },
-    hideDialog() {
-      // Hide the Dialog event
-      this.$emit('update:visible', false)
-    },
   },
 }
 </script>
@@ -107,7 +103,7 @@ export default {
     }
   }
   .el-dialog--center .el-dialog__body {
-    padding: 32px 24px 32px;
+    padding: 24px;
   }
   .el-dialog__footer {
     text-align: right !important;

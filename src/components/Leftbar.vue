@@ -2,7 +2,10 @@
   <div class="leftbar">
     <LeftbarTop/>
     <LeftbarConnections/>
-    <a href="javascript:;" class="new-connection-btn">+ New Connection</a>
+    <a href="javascript:;" class="new-connection-btn" @click="showNewConnectionDialog=true">
+      + New Connection
+    </a>
+    <new-connection :visible.sync="showNewConnectionDialog"></new-connection>
   </div>
 </template>
 
@@ -10,6 +13,7 @@
 <script>
 import LeftbarTop from '@/components/LeftbarTop.vue'
 import LeftbarConnections from '@/components/LeftbarConnections.vue'
+import NewConnection from '@/components/NewConnection.vue'
 
 export default {
   name: 'Leftbar',
@@ -19,6 +23,12 @@ export default {
   components: {
     LeftbarTop,
     LeftbarConnections,
+    NewConnection,
+  },
+  data() {
+    return {
+      showNewConnectionDialog: false,
+    }
   },
 };
 </script>
