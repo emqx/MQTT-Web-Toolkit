@@ -1,7 +1,7 @@
 <template>
   <div class="connection-content">
     <div class="top-bar">
-      <span class="client-name">Device XXX</span>
+      <span class="client-name">{{ activeConnection  }}</span>
       <a href="javascript:;" class="disconnect-button">
         <span class="iconfont icon-disconnect"></span>Disconnect
       </a>
@@ -54,6 +54,11 @@ export default {
     ConnectionMsgLeft,
     ConnectionMsgRight,
     ConnectionMsgPublish,
+  },
+  computed: {
+    activeConnection() {
+      return this.$store.state.activeConnection
+    },
   },
   data() {
     return {

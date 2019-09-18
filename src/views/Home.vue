@@ -2,8 +2,8 @@
   <div class="home">
     <Leftbar msg="Welcome to Your Vue.js App"/>
     <div class="right-content">
-    <ConnectionContent v-if="connections"/>
-    <EmptyPage v-else/>
+      <ConnectionContent v-if="connections"/>
+      <EmptyPage v-else/>
     </div>
   </div>
 </template>
@@ -21,10 +21,10 @@ export default {
     EmptyPage,
     ConnectionContent,
   },
-  data() {
-    return {
-      connections: [],
-    }
+  computed: {
+    connections() {
+      return this.$store.state.connections
+    },
   },
 };
 </script>

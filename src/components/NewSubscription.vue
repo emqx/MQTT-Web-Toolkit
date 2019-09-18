@@ -83,7 +83,7 @@ export default {
 
     },
     unSubscribe(row) {
-
+      console.log(row)
     },
   },
 };
