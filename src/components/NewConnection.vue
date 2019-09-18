@@ -6,16 +6,20 @@
     :visible.sync="showDialog"
     @confirm="confirm"
     @close="close">
-    <el-form class="new-connection-form" label-position="top" :model="connection">
+    <el-form class="new-connection-form" label-position="top" ref="form"
+      :model="connection" :rules="rules">
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="Host">
-            <el-input size="mini" placeholder="127.0.0.1" v-model="connection.host"></el-input>
+          <el-form-item label="Name" prop="name">
+            <el-input size="mini" v-model="connection.name"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="Port">
-            <el-input size="mini" placeholder="8083" v-model="connection.port"></el-input>
+          <el-form-item label="Host" prop="host">
+            <el-input size="mini" placeholder="127.0.0.1" v-model="connection.host">
+              <el-input placeholder="8083" size="mini" slot="append" type="number"
+                v-model.number="connection.port"></el-input>
+            </el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -50,7 +54,7 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="Keepalive">
-            <el-input size="mini" v-model="connection.keepalive"></el-input>
+            <el-input size="mini" type="number" v-model.number="connection.keepalive"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -64,6 +68,7 @@
 
 
 <script>
+import { mapActions } from 'vuex'
 import MyDialog from '@/components/MyDialog.vue'
 
 export default {
@@ -87,6 +92,7 @@ export default {
       confirmLoading: false,
       showDialog: this.visible,
       connection: {
+        name: '',
         host: '127.0.0.1',
         port: 8083,
         path: '/mqtt',
@@ -96,12 +102,29 @@ export default {
         keepalive: 60,
         cleanSession: false,
         ssl: false,
+        connected: false,
+        messageCount: 0,
+      },
+      rules: {
+        name: [
+          { required: true },
+        ],
+        host: [
+          { required: true },
+        ],
       },
     }
   },
   methods: {
+    ...mapActions(['CREATE_CONNECTION']),
     confirm() {
-
+      this.$refs.form.validate((valid) => {
+        if (!valid) {
+          return false
+        }
+        this.CREATE_CONNECTION({ ...this.connection })
+        return true
+      })
     },
     close() {
       this.$emit('update:visible', false)
@@ -133,6 +156,18 @@ export default {
     .el-icon-refresh {
       cursor: pointer;
       color: $color-main-green;
+    }
+    .el-input-group {
+      vertical-align: initial;
+    }
+    .el-input-group__append {
+      padding: 0;
+      border-radius: 0;
+      border: none;
+      width: 80px;
+      .el-input__inner {
+        padding-right: 8px;
+      }
     }
   }
   .el-checkbox {

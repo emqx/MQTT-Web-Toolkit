@@ -1,99 +1,44 @@
 <template>
   <div class="leftbar-connections">
-    <div class="connection-item">
+    <div class="connection-item"
+      v-for="connection in connections"
+      :class="{ active: connection.name == activeConnection }"
+      :key="connection.clientID"
+      @click="changeActiveConnection(connection.name)">
       <div class="item-left">
-        <div class="connection-status online"></div>
+        <div class="connection-status" :class="{ online: connection.connected }"></div>
         <div class="client-info">
-          <div class="client-name">Device 1</div>
-          <div class="client-id">ClientID: 1111111111111</div>
+          <div class="client-name">{{ connection.name  }}</div>
+          <div class="client-id">ClientID: {{ connection.clientID  }}</div>
         </div>
       </div>
-      <div class="new-msg-count">12</div>
-    </div>
-
-    <div class="connection-item active">
-      <div class="item-left">
-        <div class="connection-status"></div>
-        <div class="client-info">
-          <div class="client-name">Device 2</div>
-          <div class="client-id">ClientID: 2222222222222</div>
-        </div>
+      <div class="new-msg-count" v-if="connection.messageCount > 0">
+        {{ connection.messageCount }}
       </div>
-      <div class="new-msg-count">2</div>
-    </div>
-
-    <div class="connection-item">
-      <div class="item-left">
-        <div class="connection-status"></div>
-        <div class="client-info">
-          <div class="client-name">Device 1</div>
-          <div class="client-id">ClientID: 1111111111111</div>
-        </div>
-      </div>
-      <div class="new-msg-count">12</div>
-    </div>
-
-    <div class="connection-item">
-      <div class="item-left">
-        <div class="connection-status"></div>
-        <div class="client-info">
-          <div class="client-name">Device 3</div>
-          <div class="client-id">ClientID: 1111111111111</div>
-        </div>
-      </div>
-      <div class="new-msg-count">12</div>
-    </div>
-
-    <div class="connection-item">
-      <div class="item-left">
-        <div class="connection-status"></div>
-        <div class="client-info">
-          <div class="client-name">Device 4</div>
-          <div class="client-id">ClientID: 1111111111111</div>
-        </div>
-      </div>
-      <div class="new-msg-count">12</div>
-    </div>
-
-    <div class="connection-item">
-      <div class="item-left">
-        <div class="connection-status"></div>
-        <div class="client-info">
-          <div class="client-name">Device 5</div>
-          <div class="client-id">ClientID: 1111111111111</div>
-        </div>
-      </div>
-      <div class="new-msg-count">12</div>
-    </div>
-
-    <div class="connection-item">
-      <div class="item-left">
-        <div class="connection-status"></div>
-        <div class="client-info">
-          <div class="client-name">Device 6</div>
-          <div class="client-id">ClientID: 1111111111111</div>
-        </div>
-      </div>
-      <div class="new-msg-count">12</div>
-    </div>
-
-    <div class="connection-item">
-      <div class="item-left">
-        <div class="connection-status"></div>
-        <div class="client-info">
-          <div class="client-name">Device 7</div>
-          <div class="client-id">ClientID: 1111111111111</div>
-        </div>
-      </div>
-      <div class="new-msg-count">12</div>
     </div>
   </div>
 </template>
 
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   name: 'LeftbarConnections',
+  computed: {
+    connections() {
+      return this.$store.state.connections
+    },
+    activeConnection() {
+      return this.$store.state.activeConnection
+    },
+  },
+  methods: {
+    ...mapActions(['CHANGE_ACTIVE_CONNECTION']),
+    changeActiveConnection(connectionName) {
+      this.CHANGE_ACTIVE_CONNECTION(connectionName)
+    },
+  },
 };
 </script>
 
