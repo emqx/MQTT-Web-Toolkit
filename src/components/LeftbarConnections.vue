@@ -2,14 +2,14 @@
   <div class="leftbar-connections">
     <div class="connection-item"
       v-for="connection in connections"
-      :class="{ active: connection.name == activeConnection }"
-      :key="connection.clientID"
-      @click="changeActiveConnection(connection.name)">
+      :class="{ active: connection.name === activeConnection.name }"
+      :key="connection.clientId"
+      @click="changeActiveConnection(connection)">
       <div class="item-left">
-        <div class="connection-status" :class="{ online: connection.connected }"></div>
+        <div class="connection-status" :class="{ online: connection.client.connected }"></div>
         <div class="client-info">
           <div class="client-name">{{ connection.name  }}</div>
-          <div class="client-id">ClientID: {{ connection.clientID  }}</div>
+          <div class="client-id">ClientID: {{ connection.clientId  }}</div>
         </div>
       </div>
       <div class="new-msg-count" v-if="connection.messageCount > 0">
@@ -35,8 +35,8 @@ export default {
   },
   methods: {
     ...mapActions(['CHANGE_ACTIVE_CONNECTION']),
-    changeActiveConnection(connectionName) {
-      this.CHANGE_ACTIVE_CONNECTION(connectionName)
+    changeActiveConnection(connection) {
+      this.CHANGE_ACTIVE_CONNECTION(connection)
     },
   },
 };
@@ -44,6 +44,7 @@ export default {
 
 
 <style scoped lang="scss">
+@import "@/assets/scss/mixins.scss";
 @import '@/assets/scss/variable.scss';
 
 .leftbar-connections {
@@ -61,7 +62,6 @@ export default {
     }
     .client-info {
       display: inline-block;
-      margin-left: 8px;
       .client-name {
         font-size: $font-size--body;
         font-weight: 500;
@@ -83,17 +83,11 @@ export default {
       font-size: $font-size--tips;
       text-align: center;
     }
+    @include connection-status;
     .connection-status {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 4px;
-      background-color: $color-bg--connection-status;
       vertical-align: top;
-      margin-top: 7px;
-      &.online {
-        background: $color-main-green;
-      }
+      margin-top: 8px;
+      background-color: $color-bg--main-status;
     }
   }
 }

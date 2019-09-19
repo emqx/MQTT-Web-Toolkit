@@ -2,7 +2,7 @@
   <div class="home">
     <Leftbar msg="Welcome to Your Vue.js App"/>
     <div class="right-content">
-      <ConnectionContent v-if="connections"/>
+      <ConnectionContent v-if="connections.length > 0"/>
       <EmptyPage v-else/>
     </div>
   </div>

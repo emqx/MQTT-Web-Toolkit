@@ -52,6 +52,9 @@ export default {
       type: Boolean,
       required: true,
     },
+    client: {
+      type: Object,
+    },
   },
   watch: {
     visible(val) {

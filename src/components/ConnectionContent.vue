@@ -1,16 +1,34 @@
 <template>
   <div class="connection-content">
     <div class="top-bar">
-      <span class="client-name">{{ activeConnection  }}</span>
-      <a href="javascript:;" class="disconnect-button">
-        <span class="iconfont icon-disconnect"></span>Disconnect
+      <div class="connection-status"
+        :class="{ online: activeConnection.client.connected }">
+      </div>
+      <span class="client-name" :class="{ online: activeConnection.client.connected  }">
+        {{ activeConnection.name  }}
+      </span>
+      <a href="javascript:;" class="client-name" title="Edit Connection"
+        v-if="!activeConnection.client.connected"
+        @click="showConnectionDialog=true">
+        <span class="iconfont icon-edit"></span>
       </a>
-      <a href="javascript:;">
-        <span class="iconfont icon-edit"></span>Edit
+      <a href="javascript:;"
+        :class="{ connect: !activeConnection.client.connected }"
+        v-if="!activeConnection.client.connected"
+        @click="connect">
+        <span class="iconfont icon-connect"></span>Connect
+      </a>
+      <a href="javascript:;"
+        :class="{ disconnect: activeConnection.client.connected }"
+        v-else
+        @click="disconnect">
+        <span class="iconfont icon-disconnect"></span>Disconnect
       </a>
     </div>
     <div class="filter-bar">
-      <el-button plain @click="showSubscription=true">+ New Sub</el-button>
+      <el-button plain
+        v-if="activeConnection.client.connected"
+        @click="showSubscription=true">+ New Sub</el-button>
       <el-radio-group size="mini" v-model="messageType">
         <el-radio-button label="All"></el-radio-button>
         <el-radio-button label="Received"></el-radio-button>
@@ -36,16 +54,22 @@
         time="2019-09-32 12:32:11"/>
     </div>
     <ConnectionMsgPublish/>
-    <new-subscription :visible.sync="showSubscription"></new-subscription>
+    <new-subscription
+      :visible.sync="showSubscription">
+    </new-subscription>
+    <connection-dialog :visible.sync="showConnectionDialog" edit></connection-dialog>
   </div>
 </template>
 
 
 <script>
+import mqtt from 'mqtt'
+import moment from 'moment'
 import ConnectionMsgLeft from '@/components/ConnectionMsgLeft.vue'
 import ConnectionMsgRight from '@/components/ConnectionMsgRight.vue'
 import ConnectionMsgPublish from '@/components/ConnectionMsgPublish.vue'
 import NewSubscription from '@/components/NewSubscription.vue'
+import ConnectionDialog from '@/components/ConnectionDialog.vue'
 
 export default {
   name: 'ConnectionContent',
@@ -54,23 +78,79 @@ export default {
     ConnectionMsgLeft,
     ConnectionMsgRight,
     ConnectionMsgPublish,
+    ConnectionDialog,
   },
   computed: {
     activeConnection() {
       return this.$store.state.activeConnection
     },
+    connectUrl() {
+      const {
+        host, port, ssl, path,
+      } = this.activeConnection
+      const protocol = ssl ? 'wss://' : 'ws://'
+      return `${protocol}${host}:${port}${path.startsWith('/') ? '' : '/'}${path}`
+    },
   },
   data() {
     return {
+      showConnectionDialog: false,
       messageType: 'All',
       showSubscription: false,
+      messages: [],
     }
+  },
+  methods: {
+    connect() {
+      const reconnectPeriod = 4000
+      const connectTimeout = 4000
+      const {
+        clientId, username, password, keepalive, clean,
+      } = this.activeConnection
+      this.activeConnection.client = mqtt.connect(this.connectUrl, {
+        clientId,
+        username,
+        password,
+        keepalive,
+        clean,
+        connectTimeout,
+        reconnectPeriod,
+      })
+      this.activeConnection.client.on('connect', this.onConnect)
+      this.activeConnection.client.on('message', this.onMessage)
+    },
+    disconnect() {
+      if (this.activeConnection.client.connected) {
+        this.activeConnection.client.end()
+      }
+    },
+    onConnect() {
+      console.log('connected')
+    },
+    onMessage(topic, payload, packet = {}) {
+      const message = {
+        out: false,
+        createAt: this.getNow(),
+        topic,
+        payload: payload.toString(),
+        qos: packet.qos,
+        retain: packet.retain,
+      }
+      console.log(message)
+      this.messages.unshift(message)
+      // let { messageCount } = this
+      // this.$emit('update:messageCount', messageCount += 1)
+    },
+    getNow() {
+      return moment().format('HH:mm:ss')
+    },
   },
 };
 </script>
 
 
 <style lang="scss">
+@import "@/assets/scss/mixins.scss";
 @import '@/assets/scss/variable.scss';
 
 .connection-content {
@@ -85,21 +165,29 @@ export default {
     line-height: $height--connection-topbar;
     border-bottom: 1px solid $color-border--black;
     background-color: #fff;
+    @include connection-status;
     .client-name {
-      color: $color-font-black-title;
+      color: $color-bg--second-status;
       font-size: $font-size--subtitle;
       font-weight: 500;
     }
-    a {
+    .client-name.online {
+      color: $color-font-black-title;
+    }
+    .icon-edit {
+      color: $color-main-green;
+      margin-left: 16px;
+    }
+    a.connect, a.disconnect {
       float: right;
       .iconfont {
         margin-right: 4px;
       }
     }
-    .disconnect-button {
-      margin-left: 16px;
+    a.disconnect {
+      color: $color-main-red;
       &:hover {
-        color: $color-main-red;
+        color: $color-second-red;
       }
     }
   }
