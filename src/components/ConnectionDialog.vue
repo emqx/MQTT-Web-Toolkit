@@ -1,10 +1,11 @@
 <template>
   <my-dialog
-    title="New Connection"
     width="600px"
+    :title="edit ? 'Edit Connection' : 'New Connection'"
     :confirmLoading="confirmLoading"
     :visible.sync="showDialog"
     @confirm="confirm"
+    @open="open"
     @close="close">
     <el-form class="new-connection-form" label-position="top" ref="form"
       :model="connection" :rules="rules">
@@ -31,9 +32,9 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="Client ID">
-            <el-input size="mini" v-model="connection.clientID">
+            <el-input size="mini" v-model="connection.clientId">
               <i slot="suffix" title="Refresh" class="el-icon-refresh"
-                @click="refreshClientID">
+                @click="refreshClientId">
               </i>
             </el-input>
           </el-form-item>
@@ -58,7 +59,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-checkbox v-model="connection.cleanSession">Clean Session</el-checkbox>
+          <el-checkbox v-model="connection.clean">Clean Session</el-checkbox>
           <el-checkbox v-model="connection.ssl">SSL</el-checkbox>
         </el-col>
       </el-row>
@@ -81,10 +82,19 @@ export default {
       type: Boolean,
       required: true,
     },
+    edit: {
+      type: Boolean,
+      default: false,
+    },
   },
   watch: {
     visible(val) {
       this.showDialog = val
+    },
+  },
+  computed: {
+    activeConnection() {
+      return this.$store.state.activeConnection
     },
   },
   data() {
@@ -96,14 +106,14 @@ export default {
         host: '127.0.0.1',
         port: 8083,
         path: '/mqtt',
-        clientID: this.getClientID(),
+        clientId: this.getClientId(),
         username: '',
         password: '',
         keepalive: 60,
-        cleanSession: false,
+        clean: false,
         ssl: false,
-        connected: false,
         messageCount: 0,
+        client: { connected: false },
       },
       rules: {
         name: [
@@ -116,24 +126,34 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['CREATE_CONNECTION']),
+    ...mapActions(['CREATE_CONNECTION', 'EDIT_CONNECTION']),
     confirm() {
       this.$refs.form.validate((valid) => {
         if (!valid) {
           return false
         }
-        this.CREATE_CONNECTION({ ...this.connection })
+        if (this.edit) {
+          this.EDIT_CONNECTION({ ...this.connection })
+        } else {
+          this.CREATE_CONNECTION({ ...this.connection })
+        }
+        this.close()
         return true
       })
     },
     close() {
       this.$emit('update:visible', false)
     },
-    getClientID() {
+    getClientId() {
       return `mqttjs_${Math.random().toString(16).substr(2, 8)}`
     },
-    refreshClientID() {
-      this.connection.clientID = this.getClientID()
+    refreshClientId() {
+      this.connection.clientId = this.getClientId()
+    },
+    open() {
+      if (this.edit) {
+        this.connection = this.activeConnection
+      }
     },
   },
 };

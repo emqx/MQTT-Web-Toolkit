@@ -25,3 +25,17 @@
     color: $color-font-black-time;
   }
 }
+
+@mixin connection-status {
+  .connection-status {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    background-color: $color-bg--second-status;
+    margin-right: 8px;
+    &.online {
+      background: $color-main-green;
+    }
+  }
+}
