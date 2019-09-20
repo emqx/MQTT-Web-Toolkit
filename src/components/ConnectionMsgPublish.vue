@@ -1,12 +1,12 @@
 <template>
-  <div class="connection-msg-publish">
-    <div :class="['connections-input', isEdit ? 'message' : 'message-disabled']">
+  <div class="connection-msg-publish" @click="focusPublish">
+    <div :class="['connections-input', publishFocus ? 'message' : 'message-disabled']">
       <el-input
-        :placeholder="isEdit ? 'Topic' : 'Write a message'"
+        :placeholder="publishFocus ? 'Topic' : 'Write a message'"
         v-model="message.topic"
-        @focus="isEdit = true">
+        @focus="CHANGE_PUBLISH_FOCUS(true)">
       </el-input>
-      <div class="qos-retain" v-if="isEdit">
+      <div class="qos-retain" v-if="publishFocus">
         <span class="publish-label">QoS: </span>
         <el-radio-group v-model="message.qos">
           <el-radio :label="0"></el-radio>
@@ -17,7 +17,7 @@
         <el-checkbox v-model="message.retain"></el-checkbox>
       </div>
       <el-input
-        v-if="isEdit"
+        v-if="publishFocus"
         type="textarea"
         rows="4"
         placeholder="Payload"
@@ -26,7 +26,7 @@
       <a
         href="javascript:;"
         class="send-btn"
-        @click="sendMsg">
+        @click="publishMessage">
         <i class="iconfont icon-send"></i>
       </a>
     </div>
@@ -35,11 +35,21 @@
 
 
 <script>
+import { mapActions } from 'vuex'
+import getNowDate from '@/utils/time'
+
 export default {
   name: 'ConnectionMsgPublish',
+  computed: {
+    activeConnection() {
+      return this.$store.state.activeConnection
+    },
+    publishFocus() {
+      return this.$store.state.publishFocus
+    },
+  },
   data() {
     return {
-      isEdit: false,
       message: {
         topic: '',
         qos: 0,
@@ -49,11 +59,40 @@ export default {
     }
   },
   methods: {
-    sendMsg() {
-      if (!this.isEdit) {
-        return
+    ...mapActions(['CHANGE_PUBLISH_FOCUS']),
+    publishMessage() {
+      if (!this.publishFocus) {
+        return false
       }
-      this.isEdit = false
+      if (!this.activeConnection.client.connected) {
+        this.$message.error('Client Not Connected')
+      }
+      const {
+        topic, qos, payload, retain,
+      } = this.message
+      this.activeConnection.client.publish(topic, payload, { qos, retain }, (error) => {
+        if (error) {
+          console.log(error)
+          return false
+        }
+        const publishedMessage = {
+          out: true,
+          createAt: getNowDate(),
+          topic,
+          payload,
+          qos,
+          retain,
+        }
+        this.activeConnection.messages.push(publishedMessage)
+        window.scrollTo(0, document.body.scrollHeight)
+        return true
+      })
+      return true
+    },
+    focusPublish(event) {
+      event.stopPropagation()
+      this.CHANGE_PUBLISH_FOCUS(true)
+      console.log('click')
     },
   },
 }

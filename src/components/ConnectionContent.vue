@@ -1,10 +1,8 @@
 <template>
   <div class="connection-content">
     <div class="top-bar">
-      <div class="connection-status"
-        :class="{ online: activeConnection.client.connected }">
-      </div>
-      <span class="client-name" :class="{ online: activeConnection.client.connected  }">
+      <div :class="['connection-status', { 'online': activeConnection.client.connected }]"></div>
+      <span :class="['client-name', { 'online': activeConnection.client.connected }]">
         {{ activeConnection.name  }}
       </span>
       <a href="javascript:;" class="client-name" title="Edit Connection"
@@ -36,27 +34,19 @@
       </el-radio-group>
     </div>
     <div class="message-list">
-      <ConnectionMsgLeft
-        topic="/some/topic1"
-        payload="payload"
-        time="2019-09-32 12:32:11"/>
-      <ConnectionMsgLeft
-        topic="/some/topic1"
-        payload="payload"
-        time="2019-09-32 12:32:11"/>
-      <ConnectionMsgRight
-        topic="/some/topic1"
-        payload="payload"
-        time="2019-09-32 12:32:11"/>
-      <ConnectionMsgRight
-        topic="/some/topic1"
-        payload="payload"
-        time="2019-09-32 12:32:11"/>
+      <div v-for="(message, index) in messages" :key="index">
+        <ConnectionMsgLeft v-if="!message.out"
+          :topic="message.topic"
+          :payload="message.payload"
+          :time="message.createAt"/>
+        <ConnectionMsgRight v-else
+          :topic="message.topic"
+          :payload="message.payload"
+          :time="message.createAt"/>
+      </div>
     </div>
     <ConnectionMsgPublish/>
-    <new-subscription
-      :visible.sync="showSubscription">
-    </new-subscription>
+    <subscription-dialog :visible.sync="showSubscription"></subscription-dialog>
     <connection-dialog :visible.sync="showConnectionDialog" edit></connection-dialog>
   </div>
 </template>
@@ -64,17 +54,18 @@
 
 <script>
 import mqtt from 'mqtt'
-import moment from 'moment'
+import getNowDate from '@/utils/time'
 import ConnectionMsgLeft from '@/components/ConnectionMsgLeft.vue'
 import ConnectionMsgRight from '@/components/ConnectionMsgRight.vue'
 import ConnectionMsgPublish from '@/components/ConnectionMsgPublish.vue'
-import NewSubscription from '@/components/NewSubscription.vue'
+import SubscriptionDialog from '@/components/SubscriptionDialog.vue'
 import ConnectionDialog from '@/components/ConnectionDialog.vue'
+
 
 export default {
   name: 'ConnectionContent',
   components: {
-    NewSubscription,
+    SubscriptionDialog,
     ConnectionMsgLeft,
     ConnectionMsgRight,
     ConnectionMsgPublish,
@@ -91,13 +82,15 @@ export default {
       const protocol = ssl ? 'wss://' : 'ws://'
       return `${protocol}${host}:${port}${path.startsWith('/') ? '' : '/'}${path}`
     },
+    messages() {
+      return this.activeConnection.messages
+    },
   },
   data() {
     return {
       showConnectionDialog: false,
       messageType: 'All',
       showSubscription: false,
-      messages: [],
     }
   },
   methods: {
@@ -121,6 +114,7 @@ export default {
     },
     disconnect() {
       if (this.activeConnection.client.connected) {
+        this.activeConnection.subscriptions = []
         this.activeConnection.client.end()
       }
     },
@@ -130,19 +124,15 @@ export default {
     onMessage(topic, payload, packet = {}) {
       const message = {
         out: false,
-        createAt: this.getNow(),
+        createAt: getNowDate(),
         topic,
         payload: payload.toString(),
         qos: packet.qos,
         retain: packet.retain,
       }
-      console.log(message)
-      this.messages.unshift(message)
+      this.messages.push(message)
       // let { messageCount } = this
       // this.$emit('update:messageCount', messageCount += 1)
-    },
-    getNow() {
-      return moment().format('HH:mm:ss')
     },
   },
 };

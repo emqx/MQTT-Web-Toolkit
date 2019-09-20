@@ -73,7 +73,7 @@ import { mapActions } from 'vuex'
 import MyDialog from '@/components/MyDialog.vue'
 
 export default {
-  name: 'new-connection',
+  name: 'connection-dialog',
   components: {
     MyDialog,
   },
@@ -114,6 +114,8 @@ export default {
         ssl: false,
         messageCount: 0,
         client: { connected: false },
+        subscriptions: [],
+        messages: [],
       },
       rules: {
         name: [
@@ -153,6 +155,8 @@ export default {
     open() {
       if (this.edit) {
         this.connection = this.activeConnection
+      } else {
+        this.$refs.form.resetFields()
       }
     },
   },
