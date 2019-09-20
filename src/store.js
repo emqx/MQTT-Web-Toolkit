@@ -8,6 +8,7 @@ const CREATE_CONNECTION = 'CREATE_CONNECTION'
 const EDIT_CONNECTION = 'EDIT_CONNECTION'
 const DELETE_CONNECTION = 'DELETE_CONNECTION'
 const CHANGE_ACTIVE_CONNECTION = 'CHANGE_ACTIVE_CONNECTION'
+const CHANGE_PUBLISH_FOCUS = 'CHANGE_PUBLISH_FOCUS'
 
 
 const storageConnections = JSON.parse(localStorage.getItem('connections')) || []
@@ -16,6 +17,7 @@ export default new Vuex.Store({
   state: {
     connections: storageConnections,
     activeConnection: storageConnections.length > 0 ? storageConnections[0] : '',
+    publishFocus: false,
   },
   mutations: {
     [CREATE_CONNECTION](state, connection) {
@@ -40,6 +42,12 @@ export default new Vuex.Store({
     [CHANGE_ACTIVE_CONNECTION](state, connection) {
       state.activeConnection = connection
     },
+    [CHANGE_ACTIVE_CONNECTION](state, connection) {
+      state.activeConnection = connection
+    },
+    [CHANGE_PUBLISH_FOCUS](state, isFocus) {
+      state.publishFocus = isFocus
+    },
   },
   actions: {
     [CREATE_CONNECTION]({ commit }, connection) {
@@ -53,6 +61,9 @@ export default new Vuex.Store({
     },
     [CHANGE_ACTIVE_CONNECTION]({ commit }, connection) {
       commit(CHANGE_ACTIVE_CONNECTION, connection)
+    },
+    [CHANGE_PUBLISH_FOCUS]({ commit }, isFocus) {
+      commit(CHANGE_PUBLISH_FOCUS, isFocus)
     },
   },
 });
