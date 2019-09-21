@@ -4,7 +4,6 @@
     width="600px"
     :footer="false"
     :visible.sync="showDialog"
-    @open="open"
     @close="close">
     <el-form class="new-sub-form" ref="form" :inline="true" :model="subscription" :rules="rules">
       <el-form-item label="Topic: " prop="topic">
@@ -23,7 +22,7 @@
           @click="subscribe">Subscribe</el-button>
       </el-form-item>
     </el-form>
-    <el-table border style="width: 100%" :data="subscriptions">
+    <el-table border style="width: 100%" :data="activeConnection.subscriptions">
       <el-table-column prop="topic" label="Topic"></el-table-column>
       <el-table-column prop="qos" label="QoS" width="80"></el-table-column>
       <el-table-column label="Oper" width="56">
@@ -39,6 +38,7 @@
 
 
 <script>
+import { mapActions } from 'vuex'
 import MyDialog from '@/components/MyDialog.vue'
 
 export default {
@@ -58,16 +58,8 @@ export default {
     },
   },
   computed: {
-    client() {
-      return this.$store.state.activeConnection.client
-    },
-    subscriptions: {
-      get() {
-        return this.$store.state.activeConnection.subscriptions
-      },
-      set(newValue) {
-        this.$store.state.activeConnection.subscriptions = newValue
-      },
+    activeConnection() {
+      return this.$store.state.activeConnection
     },
   },
   data() {
@@ -86,49 +78,55 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['CHANGE_SUBSCRIPTIONS']),
     subscribe() {
-      if (!this.client.connected) {
+      if (!this.activeConnection.client.connected) {
         return false
       }
       const { topic, qos } = this.subscription
-      this.client.subscribe(topic, { qos }, (error, res) => {
+      this.activeConnection.client.subscribe(topic, { qos }, (error, res) => {
         if (error) {
-          console.log(error)
+          this.$message.error(error)
           return false
         }
         if (res.length < 1 || ![0, 1, 2].includes(res[0].qos)) {
-          console.log('Subscribe Failure!')
+          this.$message.error('Subscribe Failure!')
           return false
         }
-        const existTopicIndex = this.subscriptions.findIndex(item => item.topic === topic)
+
+        const subscriptions = [...this.activeConnection.subscriptions]
+        const existTopicIndex = subscriptions.findIndex(item => item.topic === topic)
         if (existTopicIndex !== -1) {
-          this.subscriptions[existTopicIndex].qos = qos
+          subscriptions[existTopicIndex].qos = qos
         } else {
-          this.subscriptions.push({ ...this.subscription })
+          subscriptions.push({ ...this.subscription })
         }
+        this.CHANGE_SUBSCRIPTIONS({ name: this.activeConnection.name, subscriptions })
         return true
       })
       return true
     },
     unSubscribe(row) {
-      if (!this.client.connected) {
+      if (!this.activeConnection.client.connected) {
         return false
       }
       const { topic, qos } = row
-      this.client.unsubscribe(topic, { qos }, (error) => {
+      this.activeConnection.client.unsubscribe(topic, { qos }, (error) => {
         if (error) {
-          console.log(error)
+          this.$message.error(error)
           return false
         }
-        this.subscriptions = this.subscriptions.filter($ => $.topic !== topic)
+        const payload = {
+          name: this.activeConnection.name,
+          subscriptions: this.activeConnection.subscriptions.filter($ => $.topic !== topic),
+        }
+        this.CHANGE_SUBSCRIPTIONS(payload)
         return true
       })
       return true
     },
-    open() {
-      this.$refs.form.resetFields()
-    },
     close() {
+      this.$refs.form.resetFields()
       this.$emit('update:visible', false)
     },
   },

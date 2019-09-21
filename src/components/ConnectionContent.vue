@@ -33,7 +33,7 @@
         <el-radio-button label="Published"></el-radio-button>
       </el-radio-group>
     </div>
-    <div class="message-list">
+    <div :class="['message-list', { 'publish-focus': publishFocus }]">
       <div v-for="(message, index) in messages" :key="index">
         <ConnectionMsgLeft v-if="!message.out"
           :topic="message.topic"
@@ -53,6 +53,7 @@
 
 
 <script>
+import { mapActions } from 'vuex'
 import mqtt from 'mqtt'
 import getNowDate from '@/utils/time'
 import ConnectionMsgLeft from '@/components/ConnectionMsgLeft.vue'
@@ -60,7 +61,6 @@ import ConnectionMsgRight from '@/components/ConnectionMsgRight.vue'
 import ConnectionMsgPublish from '@/components/ConnectionMsgPublish.vue'
 import SubscriptionDialog from '@/components/SubscriptionDialog.vue'
 import ConnectionDialog from '@/components/ConnectionDialog.vue'
-
 
 export default {
   name: 'ConnectionContent',
@@ -72,9 +72,6 @@ export default {
     ConnectionDialog,
   },
   computed: {
-    activeConnection() {
-      return this.$store.state.activeConnection
-    },
     connectUrl() {
       const {
         host, port, ssl, path,
@@ -82,8 +79,14 @@ export default {
       const protocol = ssl ? 'wss://' : 'ws://'
       return `${protocol}${host}:${port}${path.startsWith('/') ? '' : '/'}${path}`
     },
+    activeConnection() {
+      return this.$store.state.activeConnection
+    },
     messages() {
       return this.activeConnection.messages
+    },
+    publishFocus() {
+      return this.$store.state.publishFocus
     },
   },
   data() {
@@ -94,13 +97,17 @@ export default {
     }
   },
   methods: {
+    ...mapActions([
+      'PUSH_MESSAGE', 'CHANGE_CLIENT', 'UNREAD_MESSAGE_COUNT_INCREMENT',
+      'CHANGE_SUBSCRIPTIONS',
+    ]),
     connect() {
       const reconnectPeriod = 4000
       const connectTimeout = 4000
       const {
         clientId, username, password, keepalive, clean,
       } = this.activeConnection
-      this.activeConnection.client = mqtt.connect(this.connectUrl, {
+      const client = mqtt.connect(this.connectUrl, {
         clientId,
         username,
         password,
@@ -109,30 +116,38 @@ export default {
         connectTimeout,
         reconnectPeriod,
       })
+      this.CHANGE_CLIENT({ name: this.activeConnection.name, client })
       this.activeConnection.client.on('connect', this.onConnect)
-      this.activeConnection.client.on('message', this.onMessage)
+      this.activeConnection.client.on('message', this.messageArrived(this.activeConnection.name))
     },
     disconnect() {
       if (this.activeConnection.client.connected) {
-        this.activeConnection.subscriptions = []
+        this.CHANGE_SUBSCRIPTIONS({
+          name: this.activeConnection.name,
+          subscriptions: [],
+        })
         this.activeConnection.client.end()
+        this.$message.success('Disconnected')
       }
     },
     onConnect() {
-      console.log('connected')
+      this.$message.success('Connected')
     },
-    onMessage(topic, payload, packet = {}) {
-      const message = {
-        out: false,
-        createAt: getNowDate(),
-        topic,
-        payload: payload.toString(),
-        qos: packet.qos,
-        retain: packet.retain,
+    messageArrived(connectionName) {
+      return (topic, payload, packet = {}) => {
+        const message = {
+          out: false,
+          createAt: getNowDate(),
+          topic,
+          payload: payload.toString(),
+          qos: packet.qos,
+          retain: packet.retain,
+        }
+        this.PUSH_MESSAGE({ name: connectionName, message })
+        if (connectionName !== this.activeConnection.name) {
+          this.UNREAD_MESSAGE_COUNT_INCREMENT({ name: connectionName })
+        }
       }
-      this.messages.push(message)
-      // let { messageCount } = this
-      // this.$emit('update:messageCount', messageCount += 1)
     },
   },
 };
@@ -208,7 +223,8 @@ export default {
     }
   }
   .message-list {
-    padding: 120px $spacing--connection-content;
+    padding: 120px $spacing--connection-content 0;
+    margin-bottom: 100px;
   }
 }
 </style>

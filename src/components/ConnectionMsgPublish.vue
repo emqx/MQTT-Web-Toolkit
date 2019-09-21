@@ -60,19 +60,21 @@ export default {
   },
   methods: {
     ...mapActions(['CHANGE_PUBLISH_FOCUS']),
-    publishMessage() {
+    publishMessage(event) {
+      event.stopPropagation()
       if (!this.publishFocus) {
         return false
       }
       if (!this.activeConnection.client.connected) {
         this.$message.error('Client Not Connected')
+        return false
       }
       const {
         topic, qos, payload, retain,
       } = this.message
       this.activeConnection.client.publish(topic, payload, { qos, retain }, (error) => {
         if (error) {
-          console.log(error)
+          this.$message.error(error)
           return false
         }
         const publishedMessage = {
@@ -92,7 +94,6 @@ export default {
     focusPublish(event) {
       event.stopPropagation()
       this.CHANGE_PUBLISH_FOCUS(true)
-      console.log('click')
     },
   },
 }
