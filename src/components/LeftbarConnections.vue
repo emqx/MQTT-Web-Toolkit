@@ -12,8 +12,8 @@
           <div class="client-id">ClientID: {{ connection.clientId  }}</div>
         </div>
       </div>
-      <div class="new-msg-count" v-if="connection.messageCount > 0">
-        {{ connection.messageCount }}
+      <div class="new-msg-count" v-if="connection.unreadMessageCount > 0">
+        {{ connection.unreadMessageCount }}
       </div>
     </div>
   </div>
@@ -34,9 +34,10 @@ export default {
     },
   },
   methods: {
-    ...mapActions(['CHANGE_ACTIVE_CONNECTION']),
+    ...mapActions(['CHANGE_ACTIVE_CONNECTION', 'UNREAD_MESSAGE_COUNT_INCREMENT']),
     changeActiveConnection(connection) {
       this.CHANGE_ACTIVE_CONNECTION(connection)
+      this.UNREAD_MESSAGE_COUNT_INCREMENT({ name: connection.name, count: 0 })
     },
   },
 };

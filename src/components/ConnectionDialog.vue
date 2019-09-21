@@ -112,10 +112,10 @@ export default {
         keepalive: 60,
         clean: false,
         ssl: false,
-        messageCount: 0,
         client: { connected: false },
         subscriptions: [],
         messages: [],
+        unreadMessageCount: 0,
       },
       rules: {
         name: [
@@ -144,6 +144,7 @@ export default {
       })
     },
     close() {
+      this.$refs.form.resetFields()
       this.$emit('update:visible', false)
     },
     getClientId() {
@@ -155,8 +156,6 @@ export default {
     open() {
       if (this.edit) {
         this.connection = this.activeConnection
-      } else {
-        this.$refs.form.resetFields()
       }
     },
   },

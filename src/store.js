@@ -7,6 +7,10 @@ Vue.use(Vuex);
 const CREATE_CONNECTION = 'CREATE_CONNECTION'
 const EDIT_CONNECTION = 'EDIT_CONNECTION'
 const DELETE_CONNECTION = 'DELETE_CONNECTION'
+const PUSH_MESSAGE = 'PUSH_MESSAGE'
+const CHANGE_CLIENT = 'CHANGE_CLIENT'
+const CHANGE_SUBSCRIPTIONS = 'CHANGE_SUBSCRIPTIONS'
+const UNREAD_MESSAGE_COUNT_INCREMENT = 'UNREAD_MESSAGE_COUNT_INCREMENT'
 const CHANGE_ACTIVE_CONNECTION = 'CHANGE_ACTIVE_CONNECTION'
 const CHANGE_PUBLISH_FOCUS = 'CHANGE_PUBLISH_FOCUS'
 
@@ -39,8 +43,29 @@ export default new Vuex.Store({
       state.connections = connections
       localStorage.setItem('connections', connections)
     },
-    [CHANGE_ACTIVE_CONNECTION](state, connection) {
-      state.activeConnection = connection
+    [PUSH_MESSAGE](state, payload) {
+      const { name, message } = payload
+      const connectionIndex = state.connections.findIndex($ => $.name === name)
+      state.connections[connectionIndex].messages.push(message)
+    },
+    [CHANGE_CLIENT](state, payload) {
+      const { name, client } = payload
+      const connectionIndex = state.connections.findIndex($ => $.name === name)
+      state.connections[connectionIndex].client = client
+    },
+    [CHANGE_SUBSCRIPTIONS](state, payload) {
+      const { name, subscriptions } = payload
+      const connectionIndex = state.connections.findIndex($ => $.name === name)
+      state.connections[connectionIndex].subscriptions = subscriptions
+    },
+    [UNREAD_MESSAGE_COUNT_INCREMENT](state, payload) {
+      const { name, count } = payload
+      const connectionIndex = state.connections.findIndex($ => $.name === name)
+      if (count !== undefined) {
+        state.connections[connectionIndex].unreadMessageCount = count
+      } else {
+        state.connections[connectionIndex].unreadMessageCount += 1
+      }
     },
     [CHANGE_ACTIVE_CONNECTION](state, connection) {
       state.activeConnection = connection
@@ -58,6 +83,18 @@ export default new Vuex.Store({
     },
     [DELETE_CONNECTION]({ commit }, connectionName) {
       commit(DELETE_CONNECTION, connectionName)
+    },
+    [PUSH_MESSAGE]({ commit }, payload) {
+      commit(PUSH_MESSAGE, payload)
+    },
+    [CHANGE_CLIENT]({ commit }, payload) {
+      commit(CHANGE_CLIENT, payload)
+    },
+    [CHANGE_SUBSCRIPTIONS]({ commit }, payload) {
+      commit(CHANGE_SUBSCRIPTIONS, payload)
+    },
+    [UNREAD_MESSAGE_COUNT_INCREMENT]({ commit }, payload) {
+      commit(UNREAD_MESSAGE_COUNT_INCREMENT, payload)
     },
     [CHANGE_ACTIVE_CONNECTION]({ commit }, connection) {
       commit(CHANGE_ACTIVE_CONNECTION, connection)

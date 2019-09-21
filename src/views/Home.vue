@@ -31,7 +31,6 @@ export default {
     ...mapActions(['CHANGE_PUBLISH_FOCUS']),
     unFocusPublish() {
       this.CHANGE_PUBLISH_FOCUS(false)
-      console.log('unfocus')
     },
   },
 };

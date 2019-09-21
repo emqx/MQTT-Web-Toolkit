@@ -66,7 +66,7 @@ import {
   // Footer,
   Loading,
   // MessageBox,
-  // Message,
+  Message,
   // Notification,
   Divider,
 } from 'element-ui'
@@ -138,4 +138,7 @@ export default (Vue) => {
   // Vue.use(Footer)
   Vue.use(Divider)
   Vue.use(Loading.directive)
+
+  const vue = Vue
+  vue.prototype.$message = Message
 }
