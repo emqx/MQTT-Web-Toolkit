@@ -1,5 +1,5 @@
 <template>
-  <div class="connection-content">
+  <div class="connection-details">
     <div class="top-bar">
       <div :class="['connection-status', { 'online': activeConnection.client.connected }]"></div>
       <span :class="['client-name', { 'online': activeConnection.client.connected }]">
@@ -27,7 +27,7 @@
       <el-button plain
         v-if="activeConnection.client.connected"
         @click="showSubscription=true">+ New Sub</el-button>
-      <el-radio-group size="mini" v-model="messageType">
+      <el-radio-group size="mini" v-model="messageType" @change="messageTypeChanged">
         <el-radio-button label="All"></el-radio-button>
         <el-radio-button label="Received"></el-radio-button>
         <el-radio-button label="Published"></el-radio-button>
@@ -47,7 +47,8 @@
     </div>
     <ConnectionMsgPublish/>
     <subscription-dialog :visible.sync="showSubscription"></subscription-dialog>
-    <connection-dialog :visible.sync="showConnectionDialog" edit></connection-dialog>
+    <connection-dialog :visible.sync="showConnectionDialog" edit>
+    </connection-dialog>
   </div>
 </template>
 
@@ -63,7 +64,7 @@ import SubscriptionDialog from '@/components/SubscriptionDialog.vue'
 import ConnectionDialog from '@/components/ConnectionDialog.vue'
 
 export default {
-  name: 'ConnectionContent',
+  name: 'connection-details',
   components: {
     SubscriptionDialog,
     ConnectionMsgLeft,
@@ -79,21 +80,22 @@ export default {
       const protocol = ssl ? 'wss://' : 'ws://'
       return `${protocol}${host}:${port}${path.startsWith('/') ? '' : '/'}${path}`
     },
-    activeConnection() {
-      return this.$store.state.activeConnection
-    },
-    messages() {
-      return this.activeConnection.messages
-    },
     publishFocus() {
       return this.$store.state.publishFocus
     },
+    activeConnection() {
+      return this.$store.state.activeConnection
+    },
+  },
+  watch: {
+    '$route.params.id': 'getMessages',
   },
   data() {
     return {
       showConnectionDialog: false,
       messageType: 'All',
       showSubscription: false,
+      messages: [],
     }
   },
   methods: {
@@ -101,6 +103,18 @@ export default {
       'PUSH_MESSAGE', 'CHANGE_CLIENT', 'UNREAD_MESSAGE_COUNT_INCREMENT',
       'CHANGE_SUBSCRIPTIONS',
     ]),
+    getMessages() {
+      this.messages = this.activeConnection.messages
+    },
+    messageTypeChanged(messageType) {
+      if (messageType === 'Received') {
+        this.messages = this.activeConnection.messages.filter($ => $.out === false)
+      } else if (messageType === 'Published') {
+        this.messages = this.activeConnection.messages.filter($ => $.out)
+      } else {
+        this.messages = this.activeConnection.messages
+      }
+    },
     connect() {
       const reconnectPeriod = 4000
       const connectTimeout = 4000
@@ -150,6 +164,9 @@ export default {
       }
     },
   },
+  created() {
+    this.getMessages()
+  },
 };
 </script>
 
@@ -158,14 +175,14 @@ export default {
 @import "@/assets/scss/mixins.scss";
 @import '@/assets/scss/variable.scss';
 
-.connection-content {
+.connection-details {
   .top-bar, .filter-bar {
     position: fixed;
     left: $width-leftbar;
     right: 0;
   }
   .top-bar {
-    padding: 0 $spacing--connection-content;
+    padding: 0 $spacing--connection-details;
     height: $height--connection-topbar;
     line-height: $height--connection-topbar;
     border-bottom: 1px solid $color-border--black;
@@ -197,7 +214,7 @@ export default {
     }
   }
   .filter-bar {
-    padding: 16px $spacing--connection-content;
+    padding: 16px $spacing--connection-details;
     top: $height--connection-topbar + 1;
     background-color: #fff;
     .el-button {
@@ -223,7 +240,7 @@ export default {
     }
   }
   .message-list {
-    padding: 120px $spacing--connection-content 0;
+    padding: 120px $spacing--connection-details 0;
     margin-bottom: 100px;
   }
 }

@@ -1,17 +1,39 @@
-import Vue from 'vue';
-import Router from 'vue-router';
-import Home from './views/Home.vue';
+import Vue from 'vue'
+import Router from 'vue-router'
+import store from './store';
+import Home from './views/Home.vue'
 
-Vue.use(Router);
+Vue.use(Router)
 
-export default new Router({
+
+const router = new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
     {
       path: '/',
-      name: 'home',
       component: Home,
+      children: [
+        { path: '/', name: 'empty-page', component: () => import('@/views/EmptyPage.vue') },
+        { path: '/connections/:id', name: 'connection-details', component: () => import('@/views/ConnectionDetails.vue') },
+      ],
     },
   ],
-});
+})
+
+
+router.beforeEach((to, from, next) => {
+  if (to.name === 'empty-page') {
+    if (store.state.connections.length > 0) {
+      const defaultConnection = store.state.connections[0]
+      next({ path: `/connections/${defaultConnection.clientId}` })
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
+})
+
+
+export default router

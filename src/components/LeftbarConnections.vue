@@ -30,14 +30,16 @@ export default {
       return this.$store.state.connections
     },
     activeConnection() {
-      return this.$store.state.activeConnection
+      const clientId = this.$route.params.id
+      return this.$store.state.connections.find($ => $.clientId === clientId)
     },
   },
   methods: {
-    ...mapActions(['CHANGE_ACTIVE_CONNECTION', 'UNREAD_MESSAGE_COUNT_INCREMENT']),
+    ...mapActions(['UNREAD_MESSAGE_COUNT_INCREMENT', 'CHANGE_ACTIVE_CONNECTION']),
     changeActiveConnection(connection) {
-      this.CHANGE_ACTIVE_CONNECTION(connection)
       this.UNREAD_MESSAGE_COUNT_INCREMENT({ name: connection.name, count: 0 })
+      this.CHANGE_ACTIVE_CONNECTION(connection)
+      this.$router.push({ path: `/connections/${connection.clientId}` })
     },
   },
 };

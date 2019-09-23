@@ -32,7 +32,7 @@ export default new Vuex.Store({
       localStorage.setItem('connections', JSON.stringify(connections))
     },
     [EDIT_CONNECTION](state, connection) {
-      const editIndex = state.connections.findIndex(item => item.name === connection.name)
+      const editIndex = state.connections.findIndex(item => item.clientId === connection.clientId)
       if (editIndex !== -1) {
         state.connections[editIndex] = connection
         localStorage.setItem('connections', JSON.stringify(state.connections))
