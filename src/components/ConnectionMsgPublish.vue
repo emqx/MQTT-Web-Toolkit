@@ -59,7 +59,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['CHANGE_PUBLISH_FOCUS']),
+    ...mapActions(['CHANGE_PUBLISH_FOCUS', 'PUSH_MESSAGE']),
     publishMessage(event) {
       event.stopPropagation()
       if (!this.publishFocus) {
@@ -85,7 +85,7 @@ export default {
           qos,
           retain,
         }
-        this.activeConnection.messages.push(publishedMessage)
+        this.PUSH_MESSAGE({ name: this.activeConnection.name, message: publishedMessage })
         window.scrollTo(0, document.body.scrollHeight)
         return true
       })
@@ -114,7 +114,7 @@ export default {
   .connections-input {
     background: #fff;
     border-top: 1px solid $color-border--black;
-    padding: 0px $spacing--connection-content;
+    padding: 0px $spacing--connection-details;
     transition: .3s height;
     .el-input__inner {
       border: 0px;
@@ -124,7 +124,7 @@ export default {
     .qos-retain {
       position: absolute;
       top: 1px;
-      right: $spacing--connection-content;
+      right: $spacing--connection-details;
       padding-left: 32px;
       text-align: right;
       width: 300px;
@@ -160,7 +160,7 @@ export default {
     }
     .send-btn {
       position: fixed;
-      right: $spacing--connection-content;
+      right: $spacing--connection-details;
       bottom: 10px;
       color: $color-main-green;
       text-decoration: none;

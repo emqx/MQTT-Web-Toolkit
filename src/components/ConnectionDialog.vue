@@ -128,7 +128,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['CREATE_CONNECTION', 'EDIT_CONNECTION']),
+    ...mapActions(['CREATE_CONNECTION', 'EDIT_CONNECTION', 'CHANGE_ACTIVE_CONNECTION']),
     confirm() {
       this.$refs.form.validate((valid) => {
         if (!valid) {
@@ -136,8 +136,10 @@ export default {
         }
         if (this.edit) {
           this.EDIT_CONNECTION({ ...this.connection })
+          this.CHANGE_ACTIVE_CONNECTION({ ...this.connection })
         } else {
           this.CREATE_CONNECTION({ ...this.connection })
+          this.$router.push({ path: `/connections/${this.connection.clientId}` })
         }
         this.close()
         return true
@@ -156,6 +158,8 @@ export default {
     open() {
       if (this.edit) {
         this.connection = this.activeConnection
+      } else {
+        this.connection.clientId = this.getClientId()
       }
     },
   },
