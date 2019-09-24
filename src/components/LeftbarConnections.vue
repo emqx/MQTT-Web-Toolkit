@@ -42,6 +42,9 @@ export default {
       this.$router.push({ path: `/connections/${connection.clientId}` })
     },
   },
+  created() {
+    this.CHANGE_ACTIVE_CONNECTION(this.activeConnection)
+  },
 };
 </script>
 
