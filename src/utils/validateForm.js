@@ -6,7 +6,7 @@ const validateConnectionName = (rule, newValue, callback, source, options) => {
     callback()
   }
   const duplicateName = store.state.connections.find($ => $.name === newValue)
-  if (duplicateName > 0) {
+  if (duplicateName) {
     callback(new Error('Duplicate Name'));
   }
   callback()
@@ -17,7 +17,7 @@ const validateClientId = (rule, newValue, callback, source, options) => {
     callback()
   }
   const duplicateClientId = store.state.connections.find($ => $.clientId === newValue)
-  if (duplicateClientId > 0) {
+  if (duplicateClientId) {
     callback(new Error('Duplicate Client ID'));
   }
   callback()
