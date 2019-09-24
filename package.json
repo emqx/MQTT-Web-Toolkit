@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "license": "Apache",
   "scripts": {
-    "serve": "vue-cli-service serve --port 8888",
+    "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },

@@ -43,6 +43,9 @@ export default {
     },
   },
   created() {
+    if (!this.activeConnection) {
+      this.$router.push({ path: '/' })
+    }
     this.CHANGE_ACTIVE_CONNECTION(this.activeConnection)
   },
 };
