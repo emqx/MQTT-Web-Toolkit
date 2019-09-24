@@ -178,7 +178,7 @@ export default {
     },
     open() {
       if (this.edit) {
-        this.connection = this.activeConnection
+        this.connection = { ...this.activeConnection }
         this.oldConnectionName = this.connection.name
         this.oldClientId = this.connection.clientId
       } else {

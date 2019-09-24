@@ -15,6 +15,9 @@
       <div class="new-msg-count" v-if="connection.unreadMessageCount > 0">
         {{ connection.unreadMessageCount }}
       </div>
+      <a href="javascript:;" class="delete-connection" @click.stop="deleteConnection(connection)">
+        <i class="el-icon-close"></i>
+      </a>
     </div>
   </div>
 </template>
@@ -30,16 +33,36 @@ export default {
       return this.$store.state.connections
     },
     activeConnection() {
-      const clientId = this.$route.params.id
-      return this.$store.state.connections.find($ => $.clientId === clientId)
+      return this.$store.state.activeConnection
     },
   },
+  watch: {
+    '$route.params.id': 'routeChanged',
+  },
   methods: {
-    ...mapActions(['UNREAD_MESSAGE_COUNT_INCREMENT', 'CHANGE_ACTIVE_CONNECTION']),
+    ...mapActions([
+      'UNREAD_MESSAGE_COUNT_INCREMENT', 'CHANGE_ACTIVE_CONNECTION', 'DELETE_CONNECTION',
+    ]),
+    routeChanged() {
+      const clientId = this.$route.params.id
+      const activeConnection = this.$store.state.connections.find($ => $.clientId === clientId)
+      this.CHANGE_ACTIVE_CONNECTION(activeConnection)
+    },
     changeActiveConnection(connection) {
       this.UNREAD_MESSAGE_COUNT_INCREMENT({ name: connection.name, count: 0 })
       this.CHANGE_ACTIVE_CONNECTION(connection)
       this.$router.push({ path: `/connections/${connection.clientId}` })
+    },
+    deleteConnection(connection) {
+      let changeRoute = false
+      if (connection.name === this.activeConnection.name) {
+        this.CHANGE_ACTIVE_CONNECTION(this.$store.state.connections[0])
+        changeRoute = true
+      }
+      this.DELETE_CONNECTION(connection)
+      if (changeRoute) {
+        this.$router.push({ path: '/' })
+      }
     },
   },
   created() {
@@ -60,6 +83,7 @@ export default {
   margin-top: $height--leftbar-top;
   margin-bottom: $height--new-connection-btn;
   .connection-item {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -68,6 +92,11 @@ export default {
     cursor: pointer;
     &.active, &:hover {
       background-color: $color-bg--black-active;
+    }
+    &:hover {
+      .delete-connection {
+        display: block;
+      }
     }
     .client-info {
       display: inline-block;
@@ -91,6 +120,19 @@ export default {
       color: $color-font--white-title;
       font-size: $font-size--tips;
       text-align: center;
+    }
+    .delete-connection {
+      display: none;
+      position: absolute;
+      right: 16px;
+      top: 8px;
+      color: #fff;
+      &:hover {
+        color: $color-main-green;
+      }
+      .el-icon-close {
+        font-weight: 600;
+      }
     }
     @include connection-status;
     .connection-status {

@@ -32,16 +32,17 @@ export default new Vuex.Store({
       localStorage.setItem('connections', JSON.stringify(connections))
     },
     [EDIT_CONNECTION](state, connection) {
-      const editIndex = state.connections.findIndex(item => item.clientId === connection.clientId)
+      const editIndex = state.connections.findIndex(
+        item => (item.clientId === connection.clientId && item.host === connection.host),
+      )
       if (editIndex !== -1) {
         state.connections[editIndex] = connection
         localStorage.setItem('connections', JSON.stringify(state.connections))
       }
     },
-    [DELETE_CONNECTION](state, connectionName) {
-      const connections = state.connections.filter(({ name }) => name !== connectionName)
-      state.connections = connections
-      localStorage.setItem('connections', connections)
+    [DELETE_CONNECTION](state, connection) {
+      state.connections = state.connections.filter($ => $.name !== connection.name)
+      localStorage.setItem('connections', JSON.stringify(state.connections))
     },
     [PUSH_MESSAGE](state, payload) {
       const { name, message } = payload
@@ -81,8 +82,8 @@ export default new Vuex.Store({
     [EDIT_CONNECTION]({ commit }, connection) {
       commit(EDIT_CONNECTION, connection)
     },
-    [DELETE_CONNECTION]({ commit }, connectionName) {
-      commit(DELETE_CONNECTION, connectionName)
+    [DELETE_CONNECTION]({ commit }, connection) {
+      commit(DELETE_CONNECTION, connection)
     },
     [PUSH_MESSAGE]({ commit }, payload) {
       commit(PUSH_MESSAGE, payload)
