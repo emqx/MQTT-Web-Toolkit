@@ -26,12 +26,12 @@
       </el-row>
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="Path">
+          <el-form-item label="Path" prop="path">
             <el-input size="mini" placeholder="/mqtt" v-model="connection.path"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="Client ID">
+          <el-form-item label="Client ID" prop="clientId">
             <el-input size="mini" v-model="connection.clientId">
               <i slot="suffix" title="Refresh" class="el-icon-refresh"
                 @click="refreshClientId">
@@ -70,6 +70,7 @@
 
 <script>
 import { mapActions } from 'vuex'
+import { validateConnectionName, validateClientId } from '@/utils/validateForm'
 import MyDialog from '@/components/MyDialog.vue'
 
 export default {
@@ -117,12 +118,32 @@ export default {
         messages: [],
         unreadMessageCount: 0,
       },
+      oldConnectionName: '',
+      oldClientId: '',
       rules: {
         name: [
-          { required: true },
+          { required: true, message: 'Name is required' },
+          {
+            validator: (rule, value, callback, source) => {
+              const options = { oldValue: this.oldConnectionName, edit: this.edit }
+              validateConnectionName(rule, value, callback, source, options)
+            },
+          },
         ],
         host: [
-          { required: true },
+          { required: true, message: 'Host is required' },
+        ],
+        path: [
+          { required: true, message: 'Path is required' },
+        ],
+        clientId: [
+          { required: true, message: 'Client ID is required' },
+          {
+            validator: (rule, value, callback, source) => {
+              const options = { oldValue: this.oldClientId, edit: this.edit }
+              validateClientId(rule, value, callback, source, options)
+            },
+          },
         ],
       },
     }
@@ -158,6 +179,8 @@ export default {
     open() {
       if (this.edit) {
         this.connection = this.activeConnection
+        this.oldConnectionName = this.connection.name
+        this.oldClientId = this.connection.clientId
       } else {
         this.connection.clientId = this.getClientId()
       }

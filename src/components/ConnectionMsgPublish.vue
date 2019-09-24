@@ -72,6 +72,9 @@ export default {
       const {
         topic, qos, payload, retain,
       } = this.message
+      if (!topic || !payload) {
+        return false
+      }
       this.activeConnection.client.publish(topic, payload, { qos, retain }, (error) => {
         if (error) {
           this.$message.error(error)
