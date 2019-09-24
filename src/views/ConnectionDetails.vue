@@ -1,5 +1,5 @@
 <template>
-  <div class="connection-details">
+  <div class="connection-details" v-if="activeConnection">
     <div class="top-bar">
       <div :class="['connection-status', { 'online': activeConnection.client.connected }]"></div>
       <span :class="['client-name', { 'online': activeConnection.client.connected }]">
@@ -11,16 +11,18 @@
         <span class="iconfont icon-edit"></span>
       </a>
       <a href="javascript:;"
-        :class="{ connect: !activeConnection.client.connected }"
+        :class="{ 'connect': !activeConnection.client.connected, 'loading': connectLoading }"
         v-if="!activeConnection.client.connected"
         @click="connect">
-        <span class="iconfont icon-connect"></span>Connect
+        <i class="icon el-icon-loading" v-if="connectLoading"></i>
+        <span class="iconfont icon-connect" v-else></span>
+        Connect
       </a>
       <a href="javascript:;"
         :class="{ disconnect: activeConnection.client.connected }"
         v-else
         @click="disconnect">
-        <span class="iconfont icon-disconnect"></span>Disconnect
+        <i class="icon el-icon-switch-button"></i>Disconnect
       </a>
     </div>
     <div class="filter-bar">
@@ -92,6 +94,7 @@ export default {
   },
   data() {
     return {
+      connectLoading: false,
       showConnectionDialog: false,
       messageType: 'All',
       showSubscription: false,
@@ -104,7 +107,10 @@ export default {
       'CHANGE_SUBSCRIPTIONS',
     ]),
     getMessages() {
-      this.messages = this.activeConnection.messages
+      this.messageType = 'All'
+      if (this.activeConnection) {
+        this.messages = this.activeConnection.messages
+      }
     },
     messageTypeChanged(messageType) {
       if (messageType === 'Received') {
@@ -116,11 +122,15 @@ export default {
       }
     },
     connect() {
+      if (this.connectLoading || this.activeConnection.client.connected) {
+        return false
+      }
       const reconnectPeriod = 4000
       const connectTimeout = 4000
       const {
         clientId, username, password, keepalive, clean,
       } = this.activeConnection
+      this.connectLoading = true
       const client = mqtt.connect(this.connectUrl, {
         clientId,
         username,
@@ -132,7 +142,9 @@ export default {
       })
       this.CHANGE_CLIENT({ name: this.activeConnection.name, client })
       this.activeConnection.client.on('connect', this.onConnect)
+      this.activeConnection.client.on('reconnect', this.onReConnect)
       this.activeConnection.client.on('message', this.messageArrived(this.activeConnection.name))
+      return true
     },
     disconnect() {
       if (this.activeConnection.client.connected) {
@@ -145,7 +157,13 @@ export default {
       }
     },
     onConnect() {
+      this.connectLoading = false
       this.$message.success('Connected')
+    },
+    onReConnect() {
+      this.activeConnection.client.end()
+      this.connectLoading = false
+      this.$message.error('Connected Failed!')
     },
     messageArrived(connectionName) {
       return (topic, payload, packet = {}) => {
@@ -203,6 +221,7 @@ export default {
     a.connect, a.disconnect {
       float: right;
       .iconfont {
+        vertical-align: middle;
         margin-right: 4px;
       }
     }
@@ -211,6 +230,13 @@ export default {
       &:hover {
         color: $color-second-red;
       }
+    }
+    a.connect.loading {
+      cursor: not-allowed;
+    }
+    .icon {
+      font-weight: 600;
+      margin-right: 4px;
     }
   }
   .filter-bar {
@@ -241,7 +267,10 @@ export default {
   }
   .message-list {
     padding: 120px $spacing--connection-details 0;
-    margin-bottom: 100px;
+    margin-bottom: 90px;
+  }
+  .message-list.publish-focus {
+    margin-bottom: 240px;
   }
 }
 </style>

@@ -89,7 +89,9 @@ export default {
           retain,
         }
         this.PUSH_MESSAGE({ name: this.activeConnection.name, message: publishedMessage })
-        window.scrollTo(0, document.body.scrollHeight)
+        setTimeout(() => {
+          window.scrollTo(0, document.body.scrollHeight)
+        }, 1)
         return true
       })
       return true
@@ -97,6 +99,7 @@ export default {
     focusPublish(event) {
       event.stopPropagation()
       this.CHANGE_PUBLISH_FOCUS(true)
+      window.scrollTo(0, document.body.scrollHeight)
     },
   },
 }
