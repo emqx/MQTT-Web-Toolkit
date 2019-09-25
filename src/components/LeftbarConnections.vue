@@ -3,13 +3,13 @@
     <div class="connection-item"
       v-for="connection in connections"
       :class="{ active: connection.name === activeConnection.name }"
-      :key="connection.clientId"
+      :key="`${connection.id}`"
       @click="changeActiveConnection(connection)">
       <div class="item-left">
         <div class="connection-status" :class="{ online: connection.client.connected }"></div>
         <div class="client-info">
           <div class="client-name">{{ connection.name  }}</div>
-          <div class="client-id">ClientID: {{ connection.clientId  }}</div>
+          <div class="client-id">{{ connection.clientId  }}</div>
         </div>
       </div>
       <div class="new-msg-count" v-if="connection.unreadMessageCount > 0">
@@ -44,14 +44,14 @@ export default {
       'UNREAD_MESSAGE_COUNT_INCREMENT', 'CHANGE_ACTIVE_CONNECTION', 'DELETE_CONNECTION',
     ]),
     routeChanged() {
-      const clientId = this.$route.params.id
-      const activeConnection = this.$store.state.connections.find($ => $.clientId === clientId)
+      const { id } = this.$route.params
+      const activeConnection = this.$store.state.connections.find($ => $.id === id)
       this.CHANGE_ACTIVE_CONNECTION(activeConnection)
     },
     changeActiveConnection(connection) {
-      this.UNREAD_MESSAGE_COUNT_INCREMENT({ name: connection.name, count: 0 })
+      this.UNREAD_MESSAGE_COUNT_INCREMENT({ id: connection.id, count: 0 })
       this.CHANGE_ACTIVE_CONNECTION(connection)
-      this.$router.push({ path: `/connections/${connection.clientId}` })
+      this.$router.push({ path: `/connections/${connection.id}` })
     },
     deleteConnection(connection) {
       let changeRoute = false
@@ -59,7 +59,7 @@ export default {
         this.CHANGE_ACTIVE_CONNECTION(this.$store.state.connections[0])
         changeRoute = true
       }
-      this.DELETE_CONNECTION(connection)
+      this.DELETE_CONNECTION(connection.id)
       if (changeRoute) {
         this.$router.push({ path: '/' })
       }
@@ -69,7 +69,7 @@ export default {
     if (!this.activeConnection) {
       this.$router.push({ path: '/' })
     }
-    this.CHANGE_ACTIVE_CONNECTION(this.activeConnection)
+    this.routeChanged()
   },
 };
 </script>
@@ -106,8 +106,13 @@ export default {
         color: $color-font--white-title;
       }
       .client-id {
+        margin-top: 2px;
         font-size: $font-size--tips;
         color: $color-font--white-tips;
+        width: 216px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
       }
     }
     .new-msg-count {

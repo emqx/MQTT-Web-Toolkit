@@ -88,7 +88,7 @@ export default {
           qos,
           retain,
         }
-        this.PUSH_MESSAGE({ name: this.activeConnection.name, message: publishedMessage })
+        this.PUSH_MESSAGE({ id: this.activeConnection.id, message: publishedMessage })
         setTimeout(() => {
           window.scrollTo(0, document.body.scrollHeight)
         }, 1)

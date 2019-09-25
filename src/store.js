@@ -15,7 +15,12 @@ const CHANGE_ACTIVE_CONNECTION = 'CHANGE_ACTIVE_CONNECTION'
 const CHANGE_PUBLISH_FOCUS = 'CHANGE_PUBLISH_FOCUS'
 
 
-const storageConnections = JSON.parse(localStorage.getItem('connections')) || []
+let storageConnections = JSON.parse(localStorage.getItem('connections')) || []
+storageConnections = storageConnections.map((row) => {
+  const { client, ...withoutClient } = row
+  const newClient = { connected: false }
+  return { ...withoutClient, client: newClient }
+})
 
 export default new Vuex.Store({
   state: {
@@ -32,36 +37,34 @@ export default new Vuex.Store({
       localStorage.setItem('connections', JSON.stringify(connections))
     },
     [EDIT_CONNECTION](state, connection) {
-      const editIndex = state.connections.findIndex(
-        item => (item.clientId === connection.clientId && item.host === connection.host),
-      )
+      const editIndex = state.connections.findIndex($ => $.id === connection.id)
       if (editIndex !== -1) {
         state.connections[editIndex] = connection
         localStorage.setItem('connections', JSON.stringify(state.connections))
       }
     },
-    [DELETE_CONNECTION](state, connection) {
-      state.connections = state.connections.filter($ => $.name !== connection.name)
+    [DELETE_CONNECTION](state, id) {
+      state.connections = state.connections.filter($ => $.id !== id)
       localStorage.setItem('connections', JSON.stringify(state.connections))
     },
     [PUSH_MESSAGE](state, payload) {
-      const { name, message } = payload
-      const connectionIndex = state.connections.findIndex($ => $.name === name)
+      const { id, message } = payload
+      const connectionIndex = state.connections.findIndex($ => $.id === id)
       state.connections[connectionIndex].messages.push(message)
     },
     [CHANGE_CLIENT](state, payload) {
-      const { name, client } = payload
-      const connectionIndex = state.connections.findIndex($ => $.name === name)
+      const { id, client } = payload
+      const connectionIndex = state.connections.findIndex($ => $.id === id)
       state.connections[connectionIndex].client = client
     },
     [CHANGE_SUBSCRIPTIONS](state, payload) {
-      const { name, subscriptions } = payload
-      const connectionIndex = state.connections.findIndex($ => $.name === name)
+      const { id, subscriptions } = payload
+      const connectionIndex = state.connections.findIndex($ => $.id === id)
       state.connections[connectionIndex].subscriptions = subscriptions
     },
     [UNREAD_MESSAGE_COUNT_INCREMENT](state, payload) {
-      const { name, count } = payload
-      const connectionIndex = state.connections.findIndex($ => $.name === name)
+      const { id, count } = payload
+      const connectionIndex = state.connections.findIndex($ => $.id === id)
       if (count !== undefined) {
         state.connections[connectionIndex].unreadMessageCount = count
       } else {
@@ -82,8 +85,8 @@ export default new Vuex.Store({
     [EDIT_CONNECTION]({ commit }, connection) {
       commit(EDIT_CONNECTION, connection)
     },
-    [DELETE_CONNECTION]({ commit }, connection) {
-      commit(DELETE_CONNECTION, connection)
+    [DELETE_CONNECTION]({ commit }, id) {
+      commit(DELETE_CONNECTION, id)
     },
     [PUSH_MESSAGE]({ commit }, payload) {
       commit(PUSH_MESSAGE, payload)

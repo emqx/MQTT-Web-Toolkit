@@ -26,7 +26,7 @@ router.beforeEach((to, from, next) => {
   if (to.name === 'empty-page') {
     if (store.state.connections.length > 0) {
       const defaultConnection = store.state.connections[0]
-      next({ path: `/connections/${defaultConnection.clientId}` })
+      next({ path: `/connections/${defaultConnection.id}` })
     } else {
       next()
     }

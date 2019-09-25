@@ -35,6 +35,7 @@ export default {
   height: $height--leftbar-top;
   background-color: $color-bg--black;
   border-bottom: 1px solid $color-border--white;
+  z-index: 1000;
 
   .logo {
     padding-top: 24px;
