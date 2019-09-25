@@ -16,7 +16,9 @@ const validateClientId = (rule, newValue, callback, source, options) => {
   if (options.edit && options.oldValue === newValue) {
     callback()
   }
-  const duplicateClientId = store.state.connections.find($ => $.clientId === newValue)
+  const duplicateClientId = store.state.connections.find(
+    $ => ($.clientId === newValue && $.host === options.connection.host),
+  )
   if (duplicateClientId) {
     callback(new Error('Duplicate Client ID'));
   }

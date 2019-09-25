@@ -101,7 +101,7 @@ export default {
         } else {
           subscriptions.push({ ...this.subscription })
         }
-        this.CHANGE_SUBSCRIPTIONS({ name: this.activeConnection.name, subscriptions })
+        this.CHANGE_SUBSCRIPTIONS({ id: this.activeConnection.id, subscriptions })
         return true
       })
       return true
@@ -117,7 +117,7 @@ export default {
           return false
         }
         const payload = {
-          name: this.activeConnection.name,
+          id: this.activeConnection.id,
           subscriptions: this.activeConnection.subscriptions.filter($ => $.topic !== topic),
         }
         this.CHANGE_SUBSCRIPTIONS(payload)

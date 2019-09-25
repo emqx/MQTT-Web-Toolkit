@@ -69,6 +69,7 @@
 
 
 <script>
+import uuidv1 from 'uuid/v1'
 import { mapActions } from 'vuex'
 import { validateConnectionName, validateClientId } from '@/utils/validateForm'
 import MyDialog from '@/components/MyDialog.vue'
@@ -103,6 +104,7 @@ export default {
       confirmLoading: false,
       showDialog: this.visible,
       connection: {
+        id: '',
         name: '',
         host: '127.0.0.1',
         port: 8083,
@@ -112,7 +114,7 @@ export default {
         password: '',
         keepalive: 60,
         clean: false,
-        ssl: false,
+        ssl: document.location.protocol === 'https:',
         client: { connected: false },
         subscriptions: [],
         messages: [],
@@ -140,7 +142,11 @@ export default {
           { required: true, message: 'Client ID is required' },
           {
             validator: (rule, value, callback, source) => {
-              const options = { oldValue: this.oldClientId, edit: this.edit }
+              const options = {
+                oldValue: this.oldClientId,
+                edit: this.edit,
+                connection: this.connection,
+              }
               validateClientId(rule, value, callback, source, options)
             },
           },
@@ -159,8 +165,9 @@ export default {
           this.EDIT_CONNECTION({ ...this.connection })
           this.CHANGE_ACTIVE_CONNECTION({ ...this.connection })
         } else {
-          this.CREATE_CONNECTION({ ...this.connection })
-          this.$router.push({ path: `/connections/${this.connection.clientId}` })
+          const id = uuidv1()
+          this.CREATE_CONNECTION({ ...this.connection, id })
+          this.$router.push({ path: `/connections/${id}` })
         }
         this.close()
         return true

@@ -140,16 +140,17 @@ export default {
         connectTimeout,
         reconnectPeriod,
       })
-      this.CHANGE_CLIENT({ name: this.activeConnection.name, client })
+      this.CHANGE_CLIENT({ id: this.activeConnection.id, client })
       this.activeConnection.client.on('connect', this.onConnect)
+      this.activeConnection.client.on('error', this.onError)
       this.activeConnection.client.on('reconnect', this.onReConnect)
-      this.activeConnection.client.on('message', this.messageArrived(this.activeConnection.name))
+      this.activeConnection.client.on('message', this.messageArrived(this.activeConnection.id))
       return true
     },
     disconnect() {
       if (this.activeConnection.client.connected) {
         this.CHANGE_SUBSCRIPTIONS({
-          name: this.activeConnection.name,
+          id: this.activeConnection.id,
           subscriptions: [],
         })
         this.activeConnection.client.end()
@@ -160,12 +161,16 @@ export default {
       this.connectLoading = false
       this.$message.success('Connected')
     },
+    onError() {
+      this.connectLoading = false
+      this.$message.error('Connect Failed!')
+    },
     onReConnect() {
       this.activeConnection.client.end()
       this.connectLoading = false
-      this.$message.error('Connected Failed!')
+      this.$message.error('Connect Failed!')
     },
-    messageArrived(connectionName) {
+    messageArrived(id) {
       return (topic, payload, packet = {}) => {
         const message = {
           out: false,
@@ -175,9 +180,9 @@ export default {
           qos: packet.qos,
           retain: packet.retain,
         }
-        this.PUSH_MESSAGE({ name: connectionName, message })
-        if (connectionName !== this.activeConnection.name) {
-          this.UNREAD_MESSAGE_COUNT_INCREMENT({ name: connectionName })
+        this.PUSH_MESSAGE({ id, message })
+        if (id !== this.activeConnection.id) {
+          this.UNREAD_MESSAGE_COUNT_INCREMENT({ id })
         }
       }
     },
