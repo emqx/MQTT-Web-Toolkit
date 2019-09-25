@@ -14,12 +14,16 @@
   .payload {
     display: inline-block;
     min-height: 41px;
-    max-width: 300px;
+    max-width: 480px;
     min-width: 20px;
     margin: 10px 0;
     padding: 10px;
     white-space: normal;
     word-break: break-all;
+    pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
   }
   .time {
     color: $color-font-black-time;
