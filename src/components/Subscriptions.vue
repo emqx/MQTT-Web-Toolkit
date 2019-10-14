@@ -82,7 +82,7 @@ export default {
     }
   }
   .subs-content {
-    height: 180px;
+    height: 128px;
     overflow: auto;
     padding-top: 16px;
 

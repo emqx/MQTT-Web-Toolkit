@@ -18,7 +18,7 @@
       <el-form-item label="Payload">
         <el-input
           type="textarea"
-          rows="4"
+          rows="2"
           placeholder="Payload"
           v-model="message.payload">
         </el-input>
@@ -51,7 +51,7 @@ export default {
         topic: '',
         qos: 0,
         retain: false,
-        payload: JSON.stringify({ msg: 'hello' }, null, 2),
+        payload: 'Hello world!',
       },
     }
   },
@@ -104,7 +104,7 @@ export default {
       color: $color-font-label;
     }
     .el-form-item {
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
     .el-checkbox {
       float: right;

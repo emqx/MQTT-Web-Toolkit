@@ -252,8 +252,8 @@ export default {
     z-index: 1;
     box-shadow: 0 4px 12px 0 rgba(0,0,0,.1);
     .second-bar__item {
-      padding: 28px 0;
-        height: 100%;
+      padding: 16px 0;
+      height: 100%;
       &:first-child {
         border-right: 2px solid $color-border--black;
         padding-right: 28px;
@@ -264,7 +264,7 @@ export default {
     }
   }
   .message-list {
-    padding: 330px $spacing--connection-details 0;
+    padding: 264px $spacing--connection-details 0;
     margin-bottom: 90px;
   }
   .el-button {
