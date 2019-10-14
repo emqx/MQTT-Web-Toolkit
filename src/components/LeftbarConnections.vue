@@ -8,8 +8,9 @@
       <div class="item-left">
         <div class="connection-status" :class="{ online: connection.client.connected }"></div>
         <div class="client-info">
-          <div class="client-name">{{ connection.name  }}</div>
-          <div class="client-id">{{ connection.clientId  }}</div>
+          <div class="client-name">
+            {{ connection.name  }}@{{ connection.host }}:{{connection.port}}
+          </div>
         </div>
       </div>
       <div class="new-msg-count" v-if="connection.unreadMessageCount > 0">

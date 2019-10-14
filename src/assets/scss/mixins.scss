@@ -11,10 +11,19 @@
   p {
     margin: 0px;
   }
+  .left-info {
+    color: $color-msg--left-info;
+  }
+  .right-info {
+    color: $color-msg--right-info;
+  }
+  .topic {
+    margin-right: 16px;
+  }
   .payload {
     display: inline-block;
     min-height: 41px;
-    max-width: 480px;
+    max-width: 800px;
     min-width: 20px;
     margin: 10px 0;
     padding: 10px;

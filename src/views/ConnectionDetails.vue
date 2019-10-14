@@ -25,29 +25,25 @@
         <i class="icon el-icon-switch-button"></i>Disconnect
       </a>
     </div>
-    <div class="filter-bar">
-      <el-button plain
-        v-if="activeConnection.client.connected"
-        @click="showSubscription=true">+ New Sub</el-button>
-      <el-radio-group size="mini" v-model="messageType" @change="messageTypeChanged">
-        <el-radio-button label="All"></el-radio-button>
-        <el-radio-button label="Received"></el-radio-button>
-        <el-radio-button label="Published"></el-radio-button>
-      </el-radio-group>
-    </div>
-    <div :class="['message-list', { 'publish-focus': publishFocus }]">
+
+    <el-row class="second-bar">
+      <el-col class="second-bar__item" :span="12">
+        <Subscriptions @add="showSubscription = true"/>
+      </el-col>
+      <el-col class="second-bar__item" :span="12">
+        <ConnectionMsgPublish/>
+      </el-col>
+    </el-row>
+    <div class="message-list">
       <div v-for="(message, index) in messages" :key="index">
-        <ConnectionMsgLeft v-if="!message.out"
-          :topic="message.topic"
-          :payload="message.payload"
-          :time="message.createAt"/>
-        <ConnectionMsgRight v-else
-          :topic="message.topic"
-          :payload="message.payload"
-          :time="message.createAt"/>
+        <ConnectionMsgLeft
+          v-if="!message.out"
+          v-bind="message"/>
+        <ConnectionMsgRight
+          v-else
+          v-bind="message"/>
       </div>
     </div>
-    <ConnectionMsgPublish/>
     <subscription-dialog :visible.sync="showSubscription"></subscription-dialog>
     <connection-dialog :visible.sync="showConnectionDialog" edit>
     </connection-dialog>
@@ -63,6 +59,7 @@ import ConnectionMsgLeft from '@/components/ConnectionMsgLeft.vue'
 import ConnectionMsgRight from '@/components/ConnectionMsgRight.vue'
 import ConnectionMsgPublish from '@/components/ConnectionMsgPublish.vue'
 import SubscriptionDialog from '@/components/SubscriptionDialog.vue'
+import Subscriptions from '@/components/Subscriptions.vue'
 import ConnectionDialog from '@/components/ConnectionDialog.vue'
 
 export default {
@@ -73,6 +70,7 @@ export default {
     ConnectionMsgRight,
     ConnectionMsgPublish,
     ConnectionDialog,
+    Subscriptions,
   },
   computed: {
     connectUrl() {
@@ -81,9 +79,6 @@ export default {
       } = this.activeConnection
       const protocol = ssl ? 'wss://' : 'ws://'
       return `${protocol}${host}:${port}${path.startsWith('/') ? '' : '/'}${path}`
-    },
-    publishFocus() {
-      return this.$store.state.publishFocus
     },
     activeConnection() {
       return this.$store.state.activeConnection
@@ -210,6 +205,7 @@ export default {
     line-height: $height--connection-topbar;
     border-bottom: 1px solid $color-border--black;
     background-color: #fff;
+    z-index: 1;
     @include connection-status;
     .client-name {
       color: $color-bg--second-status;
@@ -244,38 +240,44 @@ export default {
       margin-right: 4px;
     }
   }
-  .filter-bar {
-    padding: 16px $spacing--connection-details;
-    top: $height--connection-topbar + 1;
+  .second-bar {
+    position: fixed;
+    right: 0;
+    left: 300px;
+    top: $height--connection-topbar + 1px;
+    height: $height--connection-second-topbar;
+    padding: 0 $spacing--connection-details;
+    border-bottom: 1px solid $color-border--black;
     background-color: #fff;
-    .el-button {
-      font-size: 12px;
-      width: 96px;
-      border-radius: 0px;
-      padding: 6px 0;
-      border: 2px solid $color-main-green;
-      color: $color-main-green;
-      &:hover, &:focus {
-        border-color: $color-second-green;
-        color: $color-second-green;
+    z-index: 1;
+    box-shadow: 0 4px 12px 0 rgba(0,0,0,.1);
+    .second-bar__item {
+      padding: 28px 0;
+        height: 100%;
+      &:first-child {
+        border-right: 2px solid $color-border--black;
+        padding-right: 28px;
       }
-    }
-    .el-radio-group {
-      float: right;
-      .el-radio-button__inner {
-        padding: 6px 15px;
-        border-radius: 0;
-        width: 80px;
-        border-width: 2px;
+      &:last-child {
+        padding-left: 28px;
       }
     }
   }
   .message-list {
-    padding: 120px $spacing--connection-details 0;
+    padding: 330px $spacing--connection-details 0;
     margin-bottom: 90px;
   }
-  .message-list.publish-focus {
-    margin-bottom: 240px;
+  .el-button {
+    font-size: 12px;
+    width: 96px;
+    border-radius: 0px;
+    padding: 6px 0;
+    border: 2px solid $color-main-green;
+    color: $color-main-green;
+    &:hover, &:focus {
+      border-color: $color-second-green;
+      color: $color-second-green;
+    }
   }
 }
 </style>

@@ -12,7 +12,6 @@ const CHANGE_CLIENT = 'CHANGE_CLIENT'
 const CHANGE_SUBSCRIPTIONS = 'CHANGE_SUBSCRIPTIONS'
 const UNREAD_MESSAGE_COUNT_INCREMENT = 'UNREAD_MESSAGE_COUNT_INCREMENT'
 const CHANGE_ACTIVE_CONNECTION = 'CHANGE_ACTIVE_CONNECTION'
-const CHANGE_PUBLISH_FOCUS = 'CHANGE_PUBLISH_FOCUS'
 
 
 let storageConnections = JSON.parse(localStorage.getItem('connections')) || []
@@ -26,7 +25,6 @@ export default new Vuex.Store({
   state: {
     connections: storageConnections,
     activeConnection: storageConnections.length > 0 ? storageConnections[0] : '',
-    publishFocus: false,
   },
   mutations: {
     [CREATE_CONNECTION](state, connection) {
@@ -50,7 +48,7 @@ export default new Vuex.Store({
     [PUSH_MESSAGE](state, payload) {
       const { id, message } = payload
       const connectionIndex = state.connections.findIndex($ => $.id === id)
-      state.connections[connectionIndex].messages.push(message)
+      state.connections[connectionIndex].messages.unshift(message)
     },
     [CHANGE_CLIENT](state, payload) {
       const { id, client } = payload
@@ -73,9 +71,6 @@ export default new Vuex.Store({
     },
     [CHANGE_ACTIVE_CONNECTION](state, connection) {
       state.activeConnection = connection
-    },
-    [CHANGE_PUBLISH_FOCUS](state, isFocus) {
-      state.publishFocus = isFocus
     },
   },
   actions: {
@@ -102,9 +97,6 @@ export default new Vuex.Store({
     },
     [CHANGE_ACTIVE_CONNECTION]({ commit }, connection) {
       commit(CHANGE_ACTIVE_CONNECTION, connection)
-    },
-    [CHANGE_PUBLISH_FOCUS]({ commit }, isFocus) {
-      commit(CHANGE_PUBLISH_FOCUS, isFocus)
     },
   },
 });

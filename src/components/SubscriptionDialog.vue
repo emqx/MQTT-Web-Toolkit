@@ -16,23 +16,14 @@
           <el-radio :label="2"></el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item>
-        <el-button plain size="mini" class="sub-button"
-          v-loading="SubscribeLoading"
-          @click="subscribe">Subscribe</el-button>
-      </el-form-item>
     </el-form>
-    <el-table border style="width: 100%" :data="activeConnection.subscriptions">
-      <el-table-column prop="topic" label="Topic"></el-table-column>
-      <el-table-column prop="qos" label="QoS" width="80"></el-table-column>
-      <el-table-column label="Oper" width="56">
-        <template slot-scope="scope">
-          <a href="javascript:;" @click="unSubscribe(scope.row)">
-            <i class="iconfont icon-delete"></i>
-          </a>
-        </template>
-      </el-table-column>
-    </el-table>
+    <div class="new-sub-form__oper">
+      <el-button plain size="mini" class="sub-button"
+        v-loading="SubscribeLoading"
+        @click="subscribe">
+        Subscribe
+      </el-button>
+    </div>
   </my-dialog>
 </template>
 
@@ -102,25 +93,7 @@ export default {
           subscriptions.push({ ...this.subscription })
         }
         this.CHANGE_SUBSCRIPTIONS({ id: this.activeConnection.id, subscriptions })
-        return true
-      })
-      return true
-    },
-    unSubscribe(row) {
-      if (!this.activeConnection.client.connected) {
-        return false
-      }
-      const { topic, qos } = row
-      this.activeConnection.client.unsubscribe(topic, { qos }, (error) => {
-        if (error) {
-          this.$message.error(error)
-          return false
-        }
-        const payload = {
-          id: this.activeConnection.id,
-          subscriptions: this.activeConnection.subscriptions.filter($ => $.topic !== topic),
-        }
-        this.CHANGE_SUBSCRIPTIONS(payload)
+        this.close()
         return true
       })
       return true
@@ -130,7 +103,7 @@ export default {
       this.$emit('update:visible', false)
     },
   },
-};
+}
 </script>
 
 
@@ -151,15 +124,18 @@ export default {
       padding-left: 8px;
     }
   }
-  .el-input__inner, .sub-button {
-    border-width: 2px;
-    border-radius: 0;
-  }
-  .sub-button {
-    padding: 6px 15px;
-    color: $color-main-green;
-    border-color: $color-main-green;
-  }
+}
+.el-input__inner, .el-textarea__inner, .sub-button {
+  border-width: 2px;
+  border-radius: 0;
+}
+.new-sub-form__oper {
+  text-align: right;
+}
+.sub-button {
+  padding: 6px 15px;
+  color: $color-main-green;
+  border-color: $color-main-green;
 }
 .el-table {
   margin-top: 8px;
