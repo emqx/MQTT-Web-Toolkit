@@ -79,6 +79,7 @@ export default {
     margin-bottom: 10px;
     .el-button {
       float: right;
+      margin-top: -4px;
     }
   }
   .subs-content {
