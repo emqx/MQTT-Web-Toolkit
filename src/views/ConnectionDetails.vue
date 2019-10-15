@@ -37,14 +37,12 @@
     </div>
     <div :class="['message-list', { 'publish-focus': publishFocus }]">
       <div v-for="(message, index) in messages" :key="index">
-        <ConnectionMsgLeft v-if="!message.out"
-          :topic="message.topic"
-          :payload="message.payload"
-          :time="message.createAt"/>
-        <ConnectionMsgRight v-else
-          :topic="message.topic"
-          :payload="message.payload"
-          :time="message.createAt"/>
+        <ConnectionMsgLeft
+          v-if="!message.out"
+          v-bind="message"/>
+        <ConnectionMsgRight
+          v-else
+          v-bind="message"/>
       </div>
     </div>
     <ConnectionMsgPublish/>

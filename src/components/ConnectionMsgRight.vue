@@ -1,10 +1,13 @@
 <template>
   <div class="connection-msg-right">
-    <p class="right-topic">{{ topic }}</p>
     <div class="right-payload payload">
+      <p class="right-info">
+        <span class="topic">Topic: {{ topic }}</span>
+        <span class="qos">QoS: {{ qos }}</span>
+      </p>
       <pre>{{ payload }}</pre>
     </div>
-    <p class="right-time time">{{ time }}</p>
+    <p class="right-time time">{{ createAt }}</p>
   </div>
 </template>
 
@@ -14,8 +17,9 @@ export default {
   name: 'ConnectionMsgRight',
   props: {
     topic: String,
+    qos: Number,
     payload: String,
-    time: String,
+    createAt: String,
   },
 }
 </script>

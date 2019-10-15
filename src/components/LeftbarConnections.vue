@@ -8,8 +8,15 @@
       <div class="item-left">
         <div class="connection-status" :class="{ online: connection.client.connected }"></div>
         <div class="client-info">
-          <div class="client-name">{{ connection.name  }}</div>
-          <div class="client-id">{{ connection.clientId  }}</div>
+          <el-tooltip
+            effect="light"
+            :disabled="`${connection.name}@${connection.host}:${connection.port}`.length < 30"
+            :content="`${connection.name}@${connection.host}:${connection.port}`"
+            placement="top">
+            <div class="client-name">
+              {{ connection.name  }}@{{ connection.host }}:{{connection.port}}
+            </div>
+          </el-tooltip>
         </div>
       </div>
       <div class="new-msg-count" v-if="connection.unreadMessageCount > 0">
@@ -104,6 +111,10 @@ export default {
         font-size: $font-size--body;
         font-weight: 500;
         color: $color-font--white-title;
+        max-width: 240px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
       }
       .client-id {
         margin-top: 2px;
