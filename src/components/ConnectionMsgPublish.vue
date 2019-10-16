@@ -1,5 +1,8 @@
 <template>
-  <div class="connection-msg-publish" @click="focusPublish">
+  <div
+    class="connection-msg-publish"
+    :style="{'margin-left': leftWidth}"
+    @click="focusPublish">
     <div :class="['connections-input', publishFocus ? 'message' : 'message-disabled']">
       <el-input
         :placeholder="publishFocus ? 'Topic' : 'Write a message'"
@@ -40,6 +43,12 @@ import getNowDate from '@/utils/time'
 
 export default {
   name: 'ConnectionMsgPublish',
+  props: {
+    leftWidth: {
+      type: String,
+      default: '300px',
+    },
+  },
   computed: {
     activeConnection() {
       return this.$store.state.activeConnection
@@ -111,14 +120,14 @@ export default {
 @import '@/assets/scss/mixins.scss';
 
 .connection-msg-publish {
+  transition: margin-left .5s;
   position: fixed;
   width: inherit;
   bottom: 0;
   left: 0;
   right: 0;
-  margin-left: 300px;
   .connections-input {
-    background: #fff;
+    background: $color-bg--main;
     border-top: 1px solid $color-border--black;
     padding: 0px $spacing--connection-details;
     transition: .3s height;
@@ -126,6 +135,7 @@ export default {
       border: 0px;
       border-radius: 0px;
       padding: 0px;
+      background: $color-bg--main;
     }
     .qos-retain {
       position: absolute;
@@ -135,7 +145,7 @@ export default {
       text-align: right;
       width: 300px;
       line-height: 40px;
-      background: #fff;
+      background: $color-bg--main;
       .publish-label {
         color: $color-font-label;
         margin-right: 16px;
@@ -157,6 +167,7 @@ export default {
       resize: none;
     }
     .el-textarea__inner {
+      background: $color-bg--main;
       border-color: $color-border--black;
       border-left: 0px;
       border-right: 0px;

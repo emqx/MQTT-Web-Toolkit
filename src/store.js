@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-
 Vue.use(Vuex);
 
 const CREATE_CONNECTION = 'CREATE_CONNECTION'
@@ -13,7 +12,7 @@ const CHANGE_SUBSCRIPTIONS = 'CHANGE_SUBSCRIPTIONS'
 const UNREAD_MESSAGE_COUNT_INCREMENT = 'UNREAD_MESSAGE_COUNT_INCREMENT'
 const CHANGE_ACTIVE_CONNECTION = 'CHANGE_ACTIVE_CONNECTION'
 const CHANGE_PUBLISH_FOCUS = 'CHANGE_PUBLISH_FOCUS'
-
+const CHANGE_SUBS_WIDTH = 'CHANGE_SUBS_WIDTH'
 
 let storageConnections = JSON.parse(localStorage.getItem('connections')) || []
 storageConnections = storageConnections.map((row) => {
@@ -22,11 +21,20 @@ storageConnections = storageConnections.map((row) => {
   return { ...withoutClient, client: newClient }
 })
 
+const getSubsWidth = () => {
+  const width = localStorage.getItem('subsWidth')
+  if (width || width === 0) {
+    return parseInt(width, 10)
+  }
+  return 300
+}
+
 export default new Vuex.Store({
   state: {
     connections: storageConnections,
     activeConnection: storageConnections.length > 0 ? storageConnections[0] : '',
     publishFocus: false,
+    subsWidth: getSubsWidth(),
   },
   mutations: {
     [CREATE_CONNECTION](state, connection) {
@@ -77,6 +85,10 @@ export default new Vuex.Store({
     [CHANGE_PUBLISH_FOCUS](state, isFocus) {
       state.publishFocus = isFocus
     },
+    [CHANGE_SUBS_WIDTH](state, width) {
+      state.subsWidth = width
+      localStorage.setItem('subsWidth', width)
+    },
   },
   actions: {
     [CREATE_CONNECTION]({ commit }, connection) {
@@ -106,5 +118,9 @@ export default new Vuex.Store({
     [CHANGE_PUBLISH_FOCUS]({ commit }, isFocus) {
       commit(CHANGE_PUBLISH_FOCUS, isFocus)
     },
+    [CHANGE_SUBS_WIDTH]({ commit }, width) {
+      console.log(width)
+      commit(CHANGE_SUBS_WIDTH, width)
+    },
   },
-});
+})

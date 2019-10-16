@@ -26,27 +26,34 @@
       </a>
     </div>
     <div class="filter-bar">
-      <el-button plain
-        v-if="activeConnection.client.connected"
-        @click="showSubscription=true">+ New Sub</el-button>
+      <span class="subs-title">
+        Subscriptions
+        <a class="collapse-btn" href="javascript:;" @click="setSubsWidth(300)">
+          <i class="el-icon-s-unfold"></i>
+        </a>
+      </span>
       <el-radio-group size="mini" v-model="messageType" @change="messageTypeChanged">
         <el-radio-button label="All"></el-radio-button>
         <el-radio-button label="Received"></el-radio-button>
         <el-radio-button label="Published"></el-radio-button>
       </el-radio-group>
     </div>
-    <div :class="['message-list', { 'publish-focus': publishFocus }]">
-      <div v-for="(message, index) in messages" :key="index">
-        <ConnectionMsgLeft
-          v-if="!message.out"
-          v-bind="message"/>
-        <ConnectionMsgRight
-          v-else
-          v-bind="message"/>
+    <el-aside width="marginLeft" :style="{ marginLeft: `${marginLeft}px` }">
+      <Subscriptions @handleClick="setSubsWidth(0)"/>
+    </el-aside>
+    <el-main :style="{ marginLeft: `${marginLeft}px` }">
+      <div :class="['message-list', { 'publish-focus': publishFocus }]">
+        <div v-for="(message, index) in messages" :key="index">
+          <ConnectionMsgLeft
+            v-if="!message.out"
+            v-bind="message"/>
+          <ConnectionMsgRight
+            v-else
+            v-bind="message"/>
+        </div>
       </div>
-    </div>
-    <ConnectionMsgPublish/>
-    <subscription-dialog :visible.sync="showSubscription"></subscription-dialog>
+      <ConnectionMsgPublish :left-width="!marginLeft ? '300px' : '578px'"/>
+    </el-main>
     <connection-dialog :visible.sync="showConnectionDialog" edit>
     </connection-dialog>
   </div>
@@ -60,13 +67,13 @@ import getNowDate from '@/utils/time'
 import ConnectionMsgLeft from '@/components/ConnectionMsgLeft.vue'
 import ConnectionMsgRight from '@/components/ConnectionMsgRight.vue'
 import ConnectionMsgPublish from '@/components/ConnectionMsgPublish.vue'
-import SubscriptionDialog from '@/components/SubscriptionDialog.vue'
+import Subscriptions from '@/components/Subscriptions.vue'
 import ConnectionDialog from '@/components/ConnectionDialog.vue'
 
 export default {
   name: 'connection-details',
   components: {
-    SubscriptionDialog,
+    Subscriptions,
     ConnectionMsgLeft,
     ConnectionMsgRight,
     ConnectionMsgPublish,
@@ -86,6 +93,9 @@ export default {
     activeConnection() {
       return this.$store.state.activeConnection
     },
+    marginLeft() {
+      return this.$store.state.subsWidth
+    },
   },
   watch: {
     '$route.params.id': 'getMessages',
@@ -102,7 +112,7 @@ export default {
   methods: {
     ...mapActions([
       'PUSH_MESSAGE', 'CHANGE_CLIENT', 'UNREAD_MESSAGE_COUNT_INCREMENT',
-      'CHANGE_SUBSCRIPTIONS',
+      'CHANGE_SUBSCRIPTIONS', 'CHANGE_SUBS_WIDTH',
     ]),
     getMessages() {
       this.messageType = 'All'
@@ -184,11 +194,14 @@ export default {
         }
       }
     },
+    setSubsWidth(val) {
+      this.CHANGE_SUBS_WIDTH(val)
+    },
   },
   created() {
     this.getMessages()
   },
-};
+}
 </script>
 
 
@@ -201,6 +214,15 @@ export default {
     position: fixed;
     left: $width-leftbar;
     right: 0;
+    z-index: 3;
+    .subs-title {
+      color: $color-font-black-title;
+      .collapse-btn {
+        font-size: 20px;
+        position: relative;
+        top: 3px;
+      }
+    }
   }
   .top-bar {
     padding: 0 $spacing--connection-details;
@@ -208,6 +230,7 @@ export default {
     line-height: $height--connection-topbar;
     border-bottom: 1px solid $color-border--black;
     background-color: #fff;
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
     @include connection-status;
     .client-name {
       color: $color-bg--second-status;
@@ -245,7 +268,8 @@ export default {
   .filter-bar {
     padding: 16px $spacing--connection-details;
     top: $height--connection-topbar + 1;
-    background-color: #fff;
+    z-index: 1;
+    background: $color-bg--main;
     .el-button {
       font-size: 12px;
       width: 96px;
@@ -263,17 +287,38 @@ export default {
       .el-radio-button__inner {
         padding: 6px 15px;
         border-radius: 0;
-        width: 80px;
+        width: 100px;
         border-width: 2px;
+        background: $color-bg--main;
+      }
+      .el-radio-button__orig-radio:checked + .el-radio-button__inner {
+        color: $color-main-green;
       }
     }
   }
   .message-list {
-    padding: 120px $spacing--connection-details 0;
+    padding: 0px $spacing--connection-details 0;
     margin-bottom: 90px;
   }
   .message-list.publish-focus {
     margin-bottom: 240px;
+  }
+  .el-aside {
+    margin-top: 49px;
+    transition: margin-left .5s;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 100;
+    background: #fff;
+    z-index: 3;
+  }
+  .el-main {
+    transition: margin-left .5s;
+    position: relative;
+    top: 110px;
+    padding: 0px;
   }
 }
 </style>
