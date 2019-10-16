@@ -1,4 +1,5 @@
 import '../assets/scss/element/element-variables.scss'
+import CollapseTransition from 'element-ui/lib/transitions/collapse-transition';
 
 import {
   // Pagination,
@@ -141,4 +142,6 @@ export default (Vue) => {
 
   const vue = Vue
   vue.prototype.$message = Message
+
+  Vue.component(CollapseTransition.name, CollapseTransition)
 }

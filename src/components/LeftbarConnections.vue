@@ -37,10 +37,10 @@ export default {
   name: 'LeftbarConnections',
   computed: {
     connections() {
-      return this.$store.state.connections
+      return this.$store.state.connections || []
     },
     activeConnection() {
-      return this.$store.state.activeConnection
+      return this.$store.state.activeConnection || {}
     },
   },
   watch: {

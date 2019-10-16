@@ -5,27 +5,24 @@
       <span :class="['client-name', { 'online': activeConnection.client.connected }]">
         {{ activeConnection.name  }}
       </span>
-      <a href="javascript:;" class="client-name" title="Edit Connection"
-        v-if="!activeConnection.client.connected"
-        @click="showConnectionDialog=true">
-        <span class="iconfont icon-edit"></span>
+      <a
+        href="javascript:;"
+        :class="['collapse-btn', showConnectionInfo ? 'top': 'bottom']"
+        @click="handleCollapse">
+        <i class="el-icon-d-arrow-left"></i>
       </a>
-      <a href="javascript:;"
-        :class="{ 'connect': !activeConnection.client.connected, 'loading': connectLoading }"
-        v-if="!activeConnection.client.connected"
-        @click="connect">
-        <i class="icon el-icon-loading" v-if="connectLoading"></i>
-        <span class="iconfont icon-connect" v-else></span>
-        Connect
-      </a>
-      <a href="javascript:;"
-        :class="{ disconnect: activeConnection.client.connected }"
-        v-else
-        @click="disconnect">
-        <i class="icon el-icon-switch-button"></i>Disconnect
-      </a>
+      <el-collapse-transition>
+        <connection-form
+          ref="connectionForm"
+          v-show="showConnectionInfo"
+          edit
+          :btnLoading="connectLoading"
+          @handleConnect="connect"
+          @handleDisconnect="disconnect">
+        </connection-form>
+      </el-collapse-transition>
     </div>
-    <div class="filter-bar">
+    <div class="filter-bar" :style="{ top: showConnectionInfo ? '338px': '50px' }">
       <span class="subs-title">
         Subscriptions
         <a class="collapse-btn" href="javascript:;" @click="setSubsWidth(300)">
@@ -38,10 +35,16 @@
         <el-radio-button label="Published"></el-radio-button>
       </el-radio-group>
     </div>
-    <el-aside width="marginLeft" :style="{ marginLeft: `${marginLeft}px` }">
+    <el-aside
+      width="marginLeft"
+      :style="{ marginLeft: `${marginLeft}px`, marginTop: showConnectionInfo ? '338px': '50px' }">
       <Subscriptions @handleClick="setSubsWidth(0)"/>
     </el-aside>
-    <el-main :style="{ marginLeft: `${marginLeft}px` }">
+    <el-main
+      :style="{
+        marginLeft: `${marginLeft}px`,
+        top: showConnectionInfo ? '398px': '110px',
+      }">
       <div :class="['message-list', { 'publish-focus': publishFocus }]">
         <div v-for="(message, index) in messages" :key="index">
           <ConnectionMsgLeft
@@ -54,8 +57,6 @@
       </div>
       <ConnectionMsgPublish :left-width="!marginLeft ? '300px' : '578px'"/>
     </el-main>
-    <connection-dialog :visible.sync="showConnectionDialog" edit>
-    </connection-dialog>
   </div>
 </template>
 
@@ -68,7 +69,7 @@ import ConnectionMsgLeft from '@/components/ConnectionMsgLeft.vue'
 import ConnectionMsgRight from '@/components/ConnectionMsgRight.vue'
 import ConnectionMsgPublish from '@/components/ConnectionMsgPublish.vue'
 import Subscriptions from '@/components/Subscriptions.vue'
-import ConnectionDialog from '@/components/ConnectionDialog.vue'
+import ConnectionForm from '@/components/ConnectionForm.vue'
 
 export default {
   name: 'connection-details',
@@ -77,7 +78,7 @@ export default {
     ConnectionMsgLeft,
     ConnectionMsgRight,
     ConnectionMsgPublish,
-    ConnectionDialog,
+    ConnectionForm,
   },
   computed: {
     connectUrl() {
@@ -96,58 +97,36 @@ export default {
     marginLeft() {
       return this.$store.state.subsWidth
     },
+    showConnectionInfo() {
+      return this.$store.state.showConnectionInfo
+    },
   },
   watch: {
-    '$route.params.id': 'getMessages',
+    '$route.params.id': 'handleIdChanged',
   },
   data() {
     return {
       connectLoading: false,
-      showConnectionDialog: false,
-      messageType: 'All',
       showSubscription: false,
+      messageType: 'All',
       messages: [],
     }
   },
   methods: {
     ...mapActions([
       'PUSH_MESSAGE', 'CHANGE_CLIENT', 'UNREAD_MESSAGE_COUNT_INCREMENT',
-      'CHANGE_SUBSCRIPTIONS', 'CHANGE_SUBS_WIDTH',
+      'CHANGE_SUBSCRIPTIONS', 'CHANGE_SUBS_WIDTH', 'SHOW_CONNECTION_INFO',
     ]),
-    getMessages() {
-      this.messageType = 'All'
-      if (this.activeConnection) {
-        this.messages = this.activeConnection.messages
-      }
-    },
-    messageTypeChanged(messageType) {
-      if (messageType === 'Received') {
-        this.messages = this.activeConnection.messages.filter($ => $.out === false)
-      } else if (messageType === 'Published') {
-        this.messages = this.activeConnection.messages.filter($ => $.out)
-      } else {
-        this.messages = this.activeConnection.messages
-      }
+    handleIdChanged() {
+      this.getMessages()
+      this.openConnectionForm()
     },
     connect() {
       if (this.connectLoading || this.activeConnection.client.connected) {
         return false
       }
-      const reconnectPeriod = 4000
-      const connectTimeout = 4000
-      const {
-        clientId, username, password, keepalive, clean,
-      } = this.activeConnection
       this.connectLoading = true
-      const client = mqtt.connect(this.connectUrl, {
-        clientId,
-        username,
-        password,
-        keepalive,
-        clean,
-        connectTimeout,
-        reconnectPeriod,
-      })
+      const client = this.createClient()
       this.CHANGE_CLIENT({ id: this.activeConnection.id, client })
       this.activeConnection.client.on('connect', this.onConnect)
       this.activeConnection.client.on('error', this.onError)
@@ -178,6 +157,38 @@ export default {
       this.connectLoading = false
       this.$message.error('Connect Failed!')
     },
+    createClient() {
+      const reconnectPeriod = 4000
+      const connectTimeout = 4000
+      const {
+        clientId, username, password, keepalive, clean,
+      } = this.activeConnection
+      this.connectLoading = true
+      return mqtt.connect(this.connectUrl, {
+        clientId,
+        username,
+        password,
+        keepalive,
+        clean,
+        connectTimeout,
+        reconnectPeriod,
+      })
+    },
+    getMessages() {
+      this.messageType = 'All'
+      if (this.activeConnection) {
+        this.messages = this.activeConnection.messages
+      }
+    },
+    messageTypeChanged(messageType) {
+      if (messageType === 'Received') {
+        this.messages = this.activeConnection.messages.filter($ => $.out === false)
+      } else if (messageType === 'Published') {
+        this.messages = this.activeConnection.messages.filter($ => $.out)
+      } else {
+        this.messages = this.activeConnection.messages
+      }
+    },
     messageArrived(id) {
       return (topic, payload, packet = {}) => {
         const message = {
@@ -197,9 +208,20 @@ export default {
     setSubsWidth(val) {
       this.CHANGE_SUBS_WIDTH(val)
     },
+    handleCollapse() {
+      this.SHOW_CONNECTION_INFO(!this.showConnectionInfo)
+      this.openConnectionForm()
+    },
+    openConnectionForm() {
+      if (this.$refs.connectionForm) {
+        setTimeout(() => {
+          this.$refs.connectionForm.open()
+        }, 100)
+      }
+    },
   },
-  created() {
-    this.getMessages()
+  mounted() {
+    this.handleIdChanged()
   },
 }
 </script>
@@ -210,11 +232,15 @@ export default {
 @import '@/assets/scss/variable.scss';
 
 .connection-details {
-  .top-bar, .filter-bar {
+  .filter-bar {
     position: fixed;
     left: $width-leftbar;
     right: 0;
     z-index: 3;
+  }
+  @include top-bar;
+  .top-bar {
+    @include connection-status;
     .subs-title {
       color: $color-font-black-title;
       .collapse-btn {
@@ -223,15 +249,6 @@ export default {
         top: 3px;
       }
     }
-  }
-  .top-bar {
-    padding: 0 $spacing--connection-details;
-    height: $height--connection-topbar;
-    line-height: $height--connection-topbar;
-    border-bottom: 1px solid $color-border--black;
-    background-color: #fff;
-    box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
-    @include connection-status;
     .client-name {
       color: $color-bg--second-status;
       font-size: $font-size--subtitle;
@@ -240,29 +257,16 @@ export default {
     .client-name.online {
       color: $color-font-black-title;
     }
-    .icon-edit {
-      color: $color-main-green;
-      margin-left: 16px;
-    }
-    a.connect, a.disconnect {
+    a.collapse-btn {
+      font-size: 18px;
       float: right;
-      .iconfont {
-        vertical-align: middle;
-        margin-right: 4px;
+      transition: all .4s;
+      &.top {
+        transform: rotate(90deg);
       }
-    }
-    a.disconnect {
-      color: $color-main-red;
-      &:hover {
-        color: $color-second-red;
+      &.bottom {
+        transform: rotate(-90deg);
       }
-    }
-    a.connect.loading {
-      cursor: not-allowed;
-    }
-    .icon {
-      font-weight: 600;
-      margin-right: 4px;
     }
   }
   .filter-bar {
@@ -270,6 +274,7 @@ export default {
     top: $height--connection-topbar + 1;
     z-index: 1;
     background: $color-bg--main;
+    transition: all .4s;
     .el-button {
       font-size: 12px;
       width: 96px;
@@ -305,7 +310,7 @@ export default {
   }
   .el-aside {
     margin-top: 49px;
-    transition: margin-left .5s;
+    transition: all .4s;
     position: fixed;
     top: 0;
     left: 0;
@@ -315,10 +320,17 @@ export default {
     z-index: 3;
   }
   .el-main {
-    transition: margin-left .5s;
+    transition: all .4s;
     position: relative;
     top: 110px;
     padding: 0px;
   }
+}
+.el-button {
+  padding: 6px 15px;
+  color: $color-main-green;
+  border-color: $color-main-green;
+  border-width: 2px;
+  border-radius: 0;
 }
 </style>

@@ -3,26 +3,19 @@
     <div>
       <img src="@/assets/images/no-connection.png">
     </div>
-    <el-button plain @click="showConnectionDialog=true">+ New Connection</el-button>
-    <connection-dialog :visible.sync="showConnectionDialog"></connection-dialog>
+    <el-button
+      plain
+      @click="$router.push({ path: '/connection/create' })">
+      + New Connection
+    </el-button>
   </div>
 </template>
 
 
 <script>
-import ConnectionDialog from '@/components/ConnectionDialog.vue'
-
 export default {
   name: 'EmptyPage',
-  components: {
-    ConnectionDialog,
-  },
-  data() {
-    return {
-      showConnectionDialog: false,
-    }
-  },
-};
+}
 </script>
 
 

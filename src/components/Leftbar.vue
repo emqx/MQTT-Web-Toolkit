@@ -2,10 +2,12 @@
   <div class="leftbar">
     <LeftbarTop/>
     <LeftbarConnections/>
-    <a href="javascript:;" class="new-connection-btn" @click="showConnectionDialog=true">
+    <a
+      href="javascript:;"
+      class="new-connection-btn"
+      @click="$router.push({ path: '/connection/create' })">
       + New Connection
     </a>
-    <connection-dialog :visible.sync="showConnectionDialog"></connection-dialog>
   </div>
 </template>
 
@@ -13,7 +15,6 @@
 <script>
 import LeftbarTop from '@/components/LeftbarTop.vue'
 import LeftbarConnections from '@/components/LeftbarConnections.vue'
-import ConnectionDialog from '@/components/ConnectionDialog.vue'
 
 export default {
   name: 'Leftbar',
@@ -23,11 +24,10 @@ export default {
   components: {
     LeftbarTop,
     LeftbarConnections,
-    ConnectionDialog,
   },
   data() {
     return {
-      showConnectionDialog: false,
+      showCreateConnection: false,
     }
   },
 };

@@ -65,7 +65,7 @@ export default {
     return {
       SubscribeLoading: false,
       subscription: {
-        topic: '',
+        topic: 'testtopic/#',
         qos: 0,
       },
       rules: {
@@ -190,14 +190,9 @@ export default {
           padding-left: 8px;
         }
       }
-      .el-input__inner, .sub-button {
+      .el-input__inner {
         border-width: 2px;
         border-radius: 0;
-      }
-      .sub-button {
-        padding: 6px 15px;
-        color: $color-main-green;
-        border-color: $color-main-green;
       }
     }
   }
