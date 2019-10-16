@@ -1,7 +1,7 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
+import Vue from 'vue'
+import Vuex from 'vuex'
 
-Vue.use(Vuex);
+Vue.use(Vuex)
 
 const CREATE_CONNECTION = 'CREATE_CONNECTION'
 const EDIT_CONNECTION = 'EDIT_CONNECTION'
@@ -13,6 +13,7 @@ const UNREAD_MESSAGE_COUNT_INCREMENT = 'UNREAD_MESSAGE_COUNT_INCREMENT'
 const CHANGE_ACTIVE_CONNECTION = 'CHANGE_ACTIVE_CONNECTION'
 const CHANGE_PUBLISH_FOCUS = 'CHANGE_PUBLISH_FOCUS'
 const CHANGE_SUBS_WIDTH = 'CHANGE_SUBS_WIDTH'
+const SHOW_CONNECTION_INFO = 'SHOW_CONNECTION_INFO'
 
 let storageConnections = JSON.parse(localStorage.getItem('connections')) || []
 storageConnections = storageConnections.map((row) => {
@@ -35,6 +36,7 @@ export default new Vuex.Store({
     activeConnection: storageConnections.length > 0 ? storageConnections[0] : '',
     publishFocus: false,
     subsWidth: getSubsWidth(),
+    showConnectionInfo: JSON.parse(localStorage.getItem('showConnectionInfo')),
   },
   mutations: {
     [CREATE_CONNECTION](state, connection) {
@@ -64,6 +66,7 @@ export default new Vuex.Store({
       const { id, client } = payload
       const connectionIndex = state.connections.findIndex($ => $.id === id)
       state.connections[connectionIndex].client = client
+      state.activeConnection = state.connections[connectionIndex]
     },
     [CHANGE_SUBSCRIPTIONS](state, payload) {
       const { id, subscriptions } = payload
@@ -88,6 +91,10 @@ export default new Vuex.Store({
     [CHANGE_SUBS_WIDTH](state, width) {
       state.subsWidth = width
       localStorage.setItem('subsWidth', width)
+    },
+    [SHOW_CONNECTION_INFO](state, showConnectionInfo) {
+      state.showConnectionInfo = showConnectionInfo
+      localStorage.setItem('showConnectionInfo', showConnectionInfo)
     },
   },
   actions: {
@@ -119,8 +126,10 @@ export default new Vuex.Store({
       commit(CHANGE_PUBLISH_FOCUS, isFocus)
     },
     [CHANGE_SUBS_WIDTH]({ commit }, width) {
-      console.log(width)
       commit(CHANGE_SUBS_WIDTH, width)
+    },
+    [SHOW_CONNECTION_INFO]({ commit }, showConnectionInfo) {
+      commit(SHOW_CONNECTION_INFO, showConnectionInfo)
     },
   },
 })

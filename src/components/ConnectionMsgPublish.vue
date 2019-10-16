@@ -120,7 +120,7 @@ export default {
 @import '@/assets/scss/mixins.scss';
 
 .connection-msg-publish {
-  transition: margin-left .5s;
+  transition: all .5s;
   position: fixed;
   width: inherit;
   bottom: 0;

@@ -1,21 +1,14 @@
 <template>
-  <my-dialog
-    width="600px"
-    :title="edit ? 'Edit Connection' : 'New Connection'"
-    :confirmLoading="confirmLoading"
-    :visible.sync="showDialog"
-    @confirm="confirm"
-    @open="open"
-    @close="close">
+  <div class="connection-form">
     <el-form class="new-connection-form" label-position="top" ref="form"
       :model="connection" :rules="rules">
       <el-row :gutter="20">
-        <el-col :span="12">
+        <el-col :span="8">
           <el-form-item label="Name" prop="name">
             <el-input size="mini" v-model="connection.name"></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="8">
           <el-form-item label="Host" prop="host">
             <el-input size="mini" placeholder="127.0.0.1" v-model="connection.host">
               <el-input placeholder="8083" size="mini" slot="append" type="number"
@@ -23,14 +16,12 @@
             </el-input>
           </el-form-item>
         </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="12">
+        <el-col :span="8">
           <el-form-item label="Path" prop="path">
             <el-input size="mini" placeholder="/mqtt" v-model="connection.path"></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="8">
           <el-form-item label="Client ID" prop="clientId">
             <el-input size="mini" v-model="connection.clientId">
               <i slot="suffix" title="Refresh" class="el-icon-refresh"
@@ -39,32 +30,40 @@
             </el-input>
           </el-form-item>
         </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="12">
+        <el-col :span="8">
           <el-form-item label="Username">
             <el-input size="mini" v-model="connection.username"></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="8">
           <el-form-item label="Password">
             <el-input size="mini" v-model="connection.password"></el-input>
           </el-form-item>
         </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="12">
+        <el-col :span="8">
           <el-form-item label="Keepalive">
             <el-input size="mini" type="number" v-model.number="connection.keepalive"></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="8">
           <el-checkbox v-model="connection.clean">Clean Session</el-checkbox>
           <el-checkbox v-model="connection.ssl">SSL</el-checkbox>
         </el-col>
+        <el-col :span="8">
+          <el-button v-if="!activeConnection.client.connected" plain size="mini"
+            :loading="btnLoading"
+            @click="confirm">
+            Save and Connect
+          </el-button>
+          <el-button v-else class="disconnect" plain size="mini"
+            :loading="btnLoading"
+            @click="cancel">
+            Disconnect
+          </el-button>
+        </el-col>
       </el-row>
     </el-form>
-  </my-dialog>
+  </div>
 </template>
 
 
@@ -72,37 +71,27 @@
 import uuidv1 from 'uuid/v1'
 import { mapActions } from 'vuex'
 import { validateConnectionName, validateClientId } from '@/utils/validateForm'
-import MyDialog from '@/components/MyDialog.vue'
 
 export default {
-  name: 'connection-dialog',
-  components: {
-    MyDialog,
-  },
+  name: 'connection-form',
   props: {
-    visible: {
+    edit: {
       type: Boolean,
       required: true,
     },
-    edit: {
+    btnLoading: {
       type: Boolean,
       default: false,
     },
   },
-  watch: {
-    visible(val) {
-      this.showDialog = val
-    },
-  },
   computed: {
     activeConnection() {
-      return this.$store.state.activeConnection
+      return this.$store.state.activeConnection || { client: {} }
     },
   },
   data() {
     return {
       confirmLoading: false,
-      showDialog: this.visible,
       connection: {
         id: '',
         name: '',
@@ -155,27 +144,30 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['CREATE_CONNECTION', 'EDIT_CONNECTION', 'CHANGE_ACTIVE_CONNECTION']),
+    ...mapActions([
+      'CREATE_CONNECTION', 'EDIT_CONNECTION', 'CHANGE_ACTIVE_CONNECTION',
+      'SHOW_CONNECTION_INFO',
+    ]),
     confirm() {
       this.$refs.form.validate((valid) => {
         if (!valid) {
-          return false
+          return
         }
         if (this.edit) {
           this.EDIT_CONNECTION({ ...this.connection })
           this.CHANGE_ACTIVE_CONNECTION({ ...this.connection })
+          this.open()
+          this.$emit('handleConnect')
         } else {
           const id = uuidv1()
           this.CREATE_CONNECTION({ ...this.connection, id })
           this.$router.push({ path: `/connections/${id}` })
+          this.SHOW_CONNECTION_INFO(true)
         }
-        this.close()
-        return true
       })
     },
-    close() {
-      this.$refs.form.resetFields()
-      this.$emit('update:visible', false)
+    cancel() {
+      this.$emit('handleDisconnect')
     },
     getClientId() {
       return `mqttjs_${Math.random().toString(16).substr(2, 8)}`
@@ -193,42 +185,53 @@ export default {
       }
     },
   },
-};
+}
 </script>
 
 
 <style lang="scss">
 @import '@/assets/scss/variable.scss';
 
-.new-connection-form {
-  .el-form-item {
-    margin-bottom: 16px;
-    .el-form-item__label {
-      padding: 0;
-      line-height: 32px;
-    }
-    .el-input__inner {
-      border-radius: 0;
-    }
-    .el-icon-refresh {
-      cursor: pointer;
-      color: $color-main-green;
-    }
-    .el-input-group {
-      vertical-align: initial;
-    }
-    .el-input-group__append {
-      padding: 0;
-      border-radius: 0;
-      border: none;
-      width: 80px;
+.connection-form {
+  padding-bottom: 24px;
+  .new-connection-form {
+    .el-form-item {
+      margin-bottom: 0px;
+      .el-form-item__label {
+        padding: 0;
+        line-height: 32px;
+      }
       .el-input__inner {
-        padding-right: 8px;
+        border-radius: 0;
+      }
+      .el-icon-refresh {
+        cursor: pointer;
+        color: $color-main-green;
+      }
+      .el-input-group {
+        vertical-align: initial;
+      }
+      .el-input-group__append {
+        padding: 0;
+        border-radius: 0;
+        border: none;
+        width: 80px;
+        .el-input__inner {
+          padding-right: 8px;
+        }
       }
     }
-  }
-  .el-checkbox {
-    margin-top: 40px;
+    .el-checkbox {
+      margin-top: 40px;
+    }
+    .el-button {
+      margin-top: 50px;
+      float: right;
+    }
+    .disconnect.el-button {
+      color: $color-main-red;
+      border-color: $color-main-red;
+    }
   }
 }
 </style>
