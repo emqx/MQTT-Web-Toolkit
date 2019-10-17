@@ -193,13 +193,19 @@ export default {
 @import '@/assets/scss/variable.scss';
 
 .connection-form {
-  padding-bottom: 24px;
+  padding-bottom: 5px;
   .new-connection-form {
+    position: relative;
+    top: -10px;
     .el-form-item {
       margin-bottom: 0px;
       .el-form-item__label {
         padding: 0;
-        line-height: 32px;
+        height: 28px;
+      }
+      .el-form-item__content {
+        line-height: 28px;
+        height: 28px;
       }
       .el-input__inner {
         border-radius: 0;

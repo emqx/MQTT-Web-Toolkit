@@ -36,7 +36,7 @@ export default new Vuex.Store({
     activeConnection: storageConnections.length > 0 ? storageConnections[0] : '',
     publishFocus: false,
     subsWidth: getSubsWidth(),
-    showConnectionInfo: JSON.parse(localStorage.getItem('showConnectionInfo')),
+    showConnectionInfo: true,
   },
   mutations: {
     [CREATE_CONNECTION](state, connection) {
@@ -94,7 +94,6 @@ export default new Vuex.Store({
     },
     [SHOW_CONNECTION_INFO](state, showConnectionInfo) {
       state.showConnectionInfo = showConnectionInfo
-      localStorage.setItem('showConnectionInfo', showConnectionInfo)
     },
   },
   actions: {
