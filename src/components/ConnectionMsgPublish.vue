@@ -7,9 +7,9 @@
       <el-input
         :placeholder="publishFocus ? 'Topic' : 'Write a message'"
         v-model="message.topic"
-        @focus="CHANGE_PUBLISH_FOCUS(true)">
+        @focus="handleTopicFocus(true)">
       </el-input>
-      <div class="qos-retain" v-if="publishFocus">
+      <div class="qos-retain" v-show="publishFocus">
         <span class="publish-label">QoS: </span>
         <el-radio-group v-model="message.qos">
           <el-radio :label="0"></el-radio>
@@ -20,7 +20,8 @@
         <el-checkbox v-model="message.retain"></el-checkbox>
       </div>
       <el-input
-        v-if="publishFocus"
+        ref="payload"
+        v-show="publishFocus"
         type="textarea"
         rows="4"
         placeholder="Payload"
@@ -69,6 +70,14 @@ export default {
   },
   methods: {
     ...mapActions(['CHANGE_PUBLISH_FOCUS', 'PUSH_MESSAGE']),
+    handleTopicFocus(val) {
+      if (this.message.topic !== '' && !this.publishFocus) {
+        setTimeout(() => {
+          this.$refs.payload.focus()
+        }, 100)
+      }
+      this.CHANGE_PUBLISH_FOCUS(val)
+    },
     publishMessage(event) {
       event.stopPropagation()
       if (!this.publishFocus) {

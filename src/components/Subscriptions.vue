@@ -32,20 +32,22 @@
           @click="subscribe">Subscribe</el-button>
         </el-form-item>
       </el-form>
-      <div
-        v-for="(sub, index) in activeConnection.subscriptions"
-        :key="index"
-        class="subs-content__item">
-        <span class="subs-topic">
-          {{ sub.topic }}
-        </span>
-        <span class="subs-qos">
-          QoS {{ sub.qos }}
-        </span>
-        <a class="subs-close" href="javascript:;" @click="unSubscribe(sub)">
-          <i class="el-icon-close"></i>
-        </a>
-      </div>
+      <transition-group name="el-fade-in-linear">
+        <div
+          v-for="(sub, index) in activeConnection.subscriptions"
+          :key="`${sub.topic}-${index}`"
+          class="subs-content__item">
+          <span class="subs-topic">
+            {{ sub.topic }}
+          </span>
+          <span class="subs-qos">
+            QoS {{ sub.qos }}
+          </span>
+          <a class="subs-close" href="javascript:;" @click="unSubscribe(sub)">
+            <i class="el-icon-close"></i>
+          </a>
+        </div>
+      </transition-group>
     </div>
   </div>
 </template>
@@ -137,8 +139,8 @@ export default {
 .subscriptions {
   color: $color-font-black-title;
   .subs-title {
-    height: 56px;
-    line-height: 56px;
+    height: 49px;
+    line-height: 49px;
     border-bottom: 1px solid $color-border--black;
     padding: 0px $spacing--connection-details;
     margin-bottom: $spacing--connection-details;
@@ -184,6 +186,7 @@ export default {
       }
     }
     .new-sub-form .el-form-item {
+      margin-bottom: 12px;
       .el-radio {
         margin-right: 16px;
         .el-radio__label {

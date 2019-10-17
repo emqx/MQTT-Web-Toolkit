@@ -22,7 +22,7 @@
         </connection-form>
       </el-collapse-transition>
     </div>
-    <div class="filter-bar" :style="{ top: showConnectionInfo ? '338px': '50px' }">
+    <div class="filter-bar" :style="{ top: showConnectionInfo ? '295px': '50px' }">
       <span class="subs-title">
         Subscriptions
         <a class="collapse-btn" href="javascript:;" @click="setSubsWidth(300)">
@@ -37,7 +37,7 @@
     </div>
     <el-aside
       width="marginLeft"
-      :style="{ marginLeft: `${marginLeft}px`, marginTop: showConnectionInfo ? '338px': '50px' }">
+      :style="{ marginLeft: `${marginLeft}px`, marginTop: showConnectionInfo ? '295px': '50px' }">
       <Subscriptions @handleClick="setSubsWidth(0)"/>
     </el-aside>
     <el-main
@@ -148,6 +148,9 @@ export default {
     onConnect() {
       this.connectLoading = false
       this.$message.success('Connected')
+      setTimeout(() => {
+        this.SHOW_CONNECTION_INFO(false)
+      }, 500)
     },
     onError() {
       this.connectLoading = false
