@@ -92,7 +92,7 @@ export default {
       return this.$store.state.publishFocus
     },
     activeConnection() {
-      return this.$store.state.activeConnection
+      return this.$store.state.activeConnection || { client: {} }
     },
     marginLeft() {
       return this.$store.state.subsWidth
@@ -127,11 +127,12 @@ export default {
       }
       this.connectLoading = true
       const client = this.createClient()
-      this.CHANGE_CLIENT({ id: this.activeConnection.id, client })
+      const { id } = this.activeConnection
+      this.CHANGE_CLIENT({ id, client })
       this.activeConnection.client.on('connect', this.onConnect)
       this.activeConnection.client.on('error', this.onError)
       this.activeConnection.client.on('reconnect', this.onReConnect)
-      this.activeConnection.client.on('message', this.messageArrived(this.activeConnection.id))
+      this.activeConnection.client.on('message', this.messageArrived(id))
       return true
     },
     disconnect() {
@@ -200,7 +201,8 @@ export default {
           retain: packet.retain,
         }
         this.PUSH_MESSAGE({ id, message })
-        if (id !== this.activeConnection.id) {
+        const currentId = this.$route.params.id
+        if (id !== currentId) {
           this.UNREAD_MESSAGE_COUNT_INCREMENT({ id })
         }
       }
@@ -222,6 +224,15 @@ export default {
   },
   mounted() {
     this.handleIdChanged()
+  },
+  beforeRouteEnter(to, from, next) {
+    if (from.name === 'connection-create') {
+      next((vm) => {
+        vm.connect()
+      })
+    } else {
+      next()
+    }
   },
 }
 </script>
@@ -325,12 +336,5 @@ export default {
     top: 110px;
     padding: 0px;
   }
-}
-.el-button {
-  padding: 6px 15px;
-  color: $color-main-green;
-  border-color: $color-main-green;
-  border-width: 2px;
-  border-radius: 0;
 }
 </style>

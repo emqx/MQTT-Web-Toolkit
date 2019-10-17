@@ -53,7 +53,7 @@
           <el-button v-if="!activeConnection.client.connected" plain size="mini"
             :loading="btnLoading"
             @click="confirm">
-            Save and Connect
+            Connect
           </el-button>
           <el-button v-else class="disconnect" plain size="mini"
             :loading="btnLoading"

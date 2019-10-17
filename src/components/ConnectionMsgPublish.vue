@@ -51,7 +51,7 @@ export default {
   },
   computed: {
     activeConnection() {
-      return this.$store.state.activeConnection
+      return this.$store.state.activeConnection || { client: {} }
     },
     publishFocus() {
       return this.$store.state.publishFocus
@@ -99,8 +99,8 @@ export default {
         }
         this.PUSH_MESSAGE({ id: this.activeConnection.id, message: publishedMessage })
         setTimeout(() => {
-          window.scrollTo(0, document.body.scrollHeight)
-        }, 1)
+          window.scrollTo(0, document.body.scrollHeight + 240)
+        }, 100)
         return true
       })
       return true
