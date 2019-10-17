@@ -40,7 +40,7 @@ export default {
       return this.$store.state.connections || []
     },
     activeConnection() {
-      return this.$store.state.activeConnection || {}
+      return this.$store.state.activeConnection || { client: {} }
     },
   },
   watch: {
@@ -78,7 +78,7 @@ export default {
     }
     this.routeChanged()
   },
-};
+}
 </script>
 
 

@@ -58,7 +58,7 @@ export default {
   name: 'subscriptions',
   computed: {
     activeConnection() {
-      return this.$store.state.activeConnection
+      return this.$store.state.activeConnection || { client: {} }
     },
   },
   data() {

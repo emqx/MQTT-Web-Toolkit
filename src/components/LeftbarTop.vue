@@ -21,7 +21,7 @@ export default {
       window.open('https://emqx.io', '_blank')
     },
   },
-};
+}
 </script>
 
 
