@@ -10,7 +10,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item label="Host" prop="host">
-            <el-input size="mini" placeholder="127.0.0.1" v-model="connection.host">
+            <el-input size="mini" placeholder="broker.emqx.io" v-model="connection.host">
               <el-input placeholder="8083" size="mini" slot="append" type="number"
                 v-model.number="connection.port"></el-input>
             </el-input>
@@ -95,7 +95,7 @@ export default {
       connection: {
         id: '',
         name: '',
-        host: '127.0.0.1',
+        host: 'broker.emqx.io',
         port: 8083,
         path: '/mqtt',
         clientId: this.getClientId(),
