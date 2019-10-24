@@ -162,7 +162,7 @@ export default {
           const id = uuidv1()
           this.CREATE_CONNECTION({ ...this.connection, id })
           this.$router.push({ path: `/connections/${id}` })
-          this.SHOW_CONNECTION_INFO(true)
+          this.SHOW_CONNECTION_INFO({ id, value: true })
         }
       })
     },

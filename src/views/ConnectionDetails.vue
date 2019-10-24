@@ -98,7 +98,8 @@ export default {
       return this.$store.state.subsWidth
     },
     showConnectionInfo() {
-      return this.$store.state.showConnectionInfo
+      const { id } = this.$route.params
+      return this.$store.state.showConnectionInfo[id]
     },
   },
   watch: {
@@ -149,7 +150,7 @@ export default {
       this.connectLoading = false
       this.$message.success('Connected')
       setTimeout(() => {
-        this.SHOW_CONNECTION_INFO(false)
+        this.SHOW_CONNECTION_INFO({ id: this.$route.params.id, value: false })
       }, 500)
     },
     onError() {
@@ -214,7 +215,7 @@ export default {
       this.CHANGE_SUBS_WIDTH(val)
     },
     handleCollapse() {
-      this.SHOW_CONNECTION_INFO(!this.showConnectionInfo)
+      this.SHOW_CONNECTION_INFO({ id: this.$route.params.id, value: !this.showConnectionInfo })
       this.openConnectionForm()
     },
     openConnectionForm() {
@@ -257,11 +258,6 @@ export default {
     @include connection-status;
     .subs-title {
       color: $color-font-black-title;
-      .collapse-btn {
-        font-size: 20px;
-        position: relative;
-        top: 3px;
-      }
     }
     .client-name {
       color: $color-bg--second-status;
@@ -282,6 +278,11 @@ export default {
         transform: rotate(-90deg);
       }
     }
+  }
+  .collapse-btn {
+    font-size: 20px;
+    position: relative;
+    top: 3px;
   }
   .filter-bar {
     padding: 16px $spacing--connection-details;
