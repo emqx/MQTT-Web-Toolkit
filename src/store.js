@@ -22,6 +22,8 @@ storageConnections = storageConnections.map((row) => {
   return { ...withoutClient, client: newClient }
 })
 
+const storageShowConnectionInfo = JSON.parse(localStorage.getItem('showConnectionInfo')) || {}
+
 const getSubsWidth = () => {
   const width = localStorage.getItem('subsWidth')
   if (width || width === 0) {
@@ -36,7 +38,7 @@ export default new Vuex.Store({
     activeConnection: storageConnections.length > 0 ? storageConnections[0] : '',
     publishFocus: false,
     subsWidth: getSubsWidth(),
-    showConnectionInfo: true,
+    showConnectionInfo: storageShowConnectionInfo,
   },
   mutations: {
     [CREATE_CONNECTION](state, connection) {
@@ -56,6 +58,8 @@ export default new Vuex.Store({
     [DELETE_CONNECTION](state, id) {
       state.connections = state.connections.filter($ => $.id !== id)
       localStorage.setItem('connections', JSON.stringify(state.connections))
+      delete state.showConnectionInfo[id]
+      localStorage.setItem('showConnectionInfo', JSON.stringify(state.showConnectionInfo))
     },
     [PUSH_MESSAGE](state, payload) {
       const { id, message } = payload
@@ -92,8 +96,9 @@ export default new Vuex.Store({
       state.subsWidth = width
       localStorage.setItem('subsWidth', width)
     },
-    [SHOW_CONNECTION_INFO](state, showConnectionInfo) {
-      state.showConnectionInfo = showConnectionInfo
+    [SHOW_CONNECTION_INFO](state, { id, value }) {
+      Vue.set(state.showConnectionInfo, id, value)
+      localStorage.setItem('showConnectionInfo', JSON.stringify(state.showConnectionInfo))
     },
   },
   actions: {
