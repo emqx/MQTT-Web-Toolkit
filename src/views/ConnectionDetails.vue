@@ -45,15 +45,19 @@
         marginLeft: `${marginLeft}px`,
         top: showConnectionInfo ? '398px': '110px',
       }">
-      <div :class="['message-list', { 'publish-focus': publishFocus }]">
-        <div v-for="(message, index) in messages" :key="index">
-          <ConnectionMsgLeft
-            v-if="!message.out"
-            v-bind="message"/>
-          <ConnectionMsgRight
-            v-else
-            v-bind="message"/>
-        </div>
+      <div class="message-list">
+        <transition-group name="el-fade-in">
+          <div v-for="(message, index) in messages" :key="`${index}-message`">
+            <ConnectionMsgLeft
+              key="ConnectionMsgLeft"
+              v-if="!message.out"
+              v-bind="message"/>
+            <ConnectionMsgRight
+              v-else
+              key="ConnectionMsgRight"
+              v-bind="message"/>
+          </div>
+        </transition-group>
       </div>
       <ConnectionMsgPublish :left-width="!marginLeft ? '300px' : '578px'"/>
     </el-main>
@@ -87,9 +91,6 @@ export default {
       } = this.activeConnection
       const protocol = ssl ? 'wss://' : 'ws://'
       return `${protocol}${host}:${port}${path.startsWith('/') ? '' : '/'}${path}`
-    },
-    publishFocus() {
-      return this.$store.state.publishFocus
     },
     activeConnection() {
       return this.$store.state.activeConnection || { client: {} }
@@ -205,6 +206,9 @@ export default {
           retain: packet.retain,
         }
         this.PUSH_MESSAGE({ id, message })
+        setTimeout(() => {
+          window.scrollTo(0, document.body.scrollHeight + 240)
+        }, 100)
         const currentId = this.$route.params.id
         if (id !== currentId) {
           this.UNREAD_MESSAGE_COUNT_INCREMENT({ id })
@@ -319,8 +323,6 @@ export default {
   .message-list {
     padding: 0px $spacing--connection-details 0;
     margin-bottom: 90px;
-  }
-  .message-list.publish-focus {
     margin-bottom: 240px;
   }
   .el-aside {
