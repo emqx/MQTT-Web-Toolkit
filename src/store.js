@@ -11,7 +11,6 @@ const CHANGE_CLIENT = 'CHANGE_CLIENT'
 const CHANGE_SUBSCRIPTIONS = 'CHANGE_SUBSCRIPTIONS'
 const UNREAD_MESSAGE_COUNT_INCREMENT = 'UNREAD_MESSAGE_COUNT_INCREMENT'
 const CHANGE_ACTIVE_CONNECTION = 'CHANGE_ACTIVE_CONNECTION'
-const CHANGE_PUBLISH_FOCUS = 'CHANGE_PUBLISH_FOCUS'
 const CHANGE_SUBS_WIDTH = 'CHANGE_SUBS_WIDTH'
 const SHOW_CONNECTION_INFO = 'SHOW_CONNECTION_INFO'
 
@@ -36,7 +35,6 @@ export default new Vuex.Store({
   state: {
     connections: storageConnections,
     activeConnection: storageConnections.length > 0 ? storageConnections[0] : '',
-    publishFocus: false,
     subsWidth: getSubsWidth(),
     showConnectionInfo: storageShowConnectionInfo,
   },
@@ -89,9 +87,6 @@ export default new Vuex.Store({
     [CHANGE_ACTIVE_CONNECTION](state, connection) {
       state.activeConnection = connection
     },
-    [CHANGE_PUBLISH_FOCUS](state, isFocus) {
-      state.publishFocus = isFocus
-    },
     [CHANGE_SUBS_WIDTH](state, width) {
       state.subsWidth = width
       localStorage.setItem('subsWidth', width)
@@ -125,9 +120,6 @@ export default new Vuex.Store({
     },
     [CHANGE_ACTIVE_CONNECTION]({ commit }, connection) {
       commit(CHANGE_ACTIVE_CONNECTION, connection)
-    },
-    [CHANGE_PUBLISH_FOCUS]({ commit }, isFocus) {
-      commit(CHANGE_PUBLISH_FOCUS, isFocus)
     },
     [CHANGE_SUBS_WIDTH]({ commit }, width) {
       commit(CHANGE_SUBS_WIDTH, width)

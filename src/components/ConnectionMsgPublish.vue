@@ -3,13 +3,12 @@
     class="connection-msg-publish"
     :style="{'margin-left': leftWidth}"
     @click="focusPublish">
-    <div :class="['connections-input', publishFocus ? 'message' : 'message-disabled']">
+    <div class="connections-input message">
       <el-input
-        :placeholder="publishFocus ? 'Topic' : 'Write a message'"
-        v-model="message.topic"
-        @focus="handleTopicFocus(true)">
+        placeholder="Topic"
+        v-model="message.topic">
       </el-input>
-      <div class="qos-retain" v-show="publishFocus">
+      <div class="qos-retain">
         <span class="publish-label">QoS: </span>
         <el-radio-group v-model="message.qos">
           <el-radio :label="0"></el-radio>
@@ -21,7 +20,6 @@
       </div>
       <el-input
         ref="payload"
-        v-show="publishFocus"
         type="textarea"
         rows="4"
         placeholder="Payload"
@@ -39,6 +37,7 @@
 
 
 <script>
+import jump from 'jump.js'
 import { mapActions } from 'vuex'
 import getNowDate from '@/utils/time'
 
@@ -54,9 +53,6 @@ export default {
     activeConnection() {
       return this.$store.state.activeConnection || { client: {} }
     },
-    publishFocus() {
-      return this.$store.state.publishFocus
-    },
   },
   data() {
     return {
@@ -69,20 +65,9 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['CHANGE_PUBLISH_FOCUS', 'PUSH_MESSAGE']),
-    handleTopicFocus(val) {
-      if (this.message.topic !== '' && !this.publishFocus) {
-        setTimeout(() => {
-          this.$refs.payload.focus()
-        }, 100)
-      }
-      this.CHANGE_PUBLISH_FOCUS(val)
-    },
+    ...mapActions(['PUSH_MESSAGE']),
     publishMessage(event) {
       event.stopPropagation()
-      if (!this.publishFocus) {
-        return false
-      }
       if (!this.activeConnection.client.connected) {
         this.$message.error('Client Not Connected')
         return false
@@ -116,8 +101,7 @@ export default {
     },
     focusPublish(event) {
       event.stopPropagation()
-      this.CHANGE_PUBLISH_FOCUS(true)
-      window.scrollTo(0, document.body.scrollHeight)
+      jump(document.body.scrollHeight)
     },
   },
 }
@@ -196,17 +180,6 @@ export default {
     }
     &.message {
       height: 200px;
-    }
-    &.message-disabled {
-      @include flex-space-between;
-      width: 100%;
-      height: $height--new-connection-btn;
-      padding-right: 16px;
-      .send-btn {
-        bottom: 6px;
-        color: $color-font-black-time;
-        cursor: not-allowed;
-      }
     }
   }
 }
