@@ -207,7 +207,7 @@ export default {
         }
         this.PUSH_MESSAGE({ id, message })
         setTimeout(() => {
-          window.scrollTo(0, document.body.scrollHeight + 240)
+          window.scrollTo(0, document.body.scrollHeight + 190)
         }, 100)
         const currentId = this.$route.params.id
         if (id !== currentId) {
@@ -323,7 +323,7 @@ export default {
   .message-list {
     padding: 0px $spacing--connection-details 0;
     margin-bottom: 90px;
-    margin-bottom: 240px;
+    margin-bottom: 190px;
   }
   .el-aside {
     margin-top: 49px;
