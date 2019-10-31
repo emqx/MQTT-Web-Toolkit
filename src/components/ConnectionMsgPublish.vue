@@ -94,7 +94,7 @@ export default {
         }
         this.PUSH_MESSAGE({ id: this.activeConnection.id, message: publishedMessage })
         setTimeout(() => {
-          window.scrollTo(0, document.body.scrollHeight + 240)
+          window.scrollTo(0, document.body.scrollHeight + 190)
         }, 100)
         return true
       })
@@ -178,9 +178,6 @@ export default {
       .icon-send {
         font-size: $font-size--send;
       }
-    }
-    &.message {
-      height: 200px;
     }
   }
 }
