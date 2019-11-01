@@ -2,7 +2,7 @@
   <div class="leftbar-top">
     <div class="logo" @click="linkToWebsite">
       <img src="@/assets/logo.svg">
-      <div class="site-title">MQTT Web Toolkit</div>
+      <div class="site-title">MQTT WebSocket Toolkit</div>
     </div>
     <div class="links">
       <a href="https://docs.emqx.io">Docs</a>
