@@ -15,9 +15,12 @@
         label-suffix=":"
         :hide-required-asterisk="true"
         :model="subscription"
-        :rules="rules">
+        :rules="rules"
+        @submit.native.prevent>
         <el-form-item label="Topic" prop="topic">
-          <el-input size="mini" placeholder="Topic" v-model="subscription.topic"></el-input>
+          <el-input size="mini" placeholder="Topic"
+            v-model="subscription.topic"
+            @keyup.enter.native="subscribe"></el-input>
         </el-form-item>
         <el-form-item label="QoS">
           <el-radio-group v-model="subscription.qos">
