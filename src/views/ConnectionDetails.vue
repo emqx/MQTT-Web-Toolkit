@@ -256,13 +256,15 @@ export default {
     left: $width-leftbar;
     right: 0;
     z-index: 3;
+    .subs-title {
+      color: $color-font-black-title;
+      position: absolute;
+      top: 12px;
+    }
   }
   @include top-bar;
   .top-bar {
     @include connection-status;
-    .subs-title {
-      color: $color-font-black-title;
-    }
     .client-name {
       color: $color-bg--second-status;
       font-size: $font-size--subtitle;

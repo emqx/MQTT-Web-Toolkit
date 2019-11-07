@@ -40,9 +40,15 @@
           v-for="(sub, index) in activeConnection.subscriptions"
           :key="`${sub.topic}-${index}`"
           class="subs-content__item">
-          <span class="subs-topic">
-            {{ sub.topic }}
-          </span>
+          <el-tooltip
+            effect="light"
+            :disabled="sub.topic.length < 26"
+            :content="sub.topic"
+            placement="top">
+            <span class="subs-topic">
+              {{ sub.topic }}
+            </span>
+          </el-tooltip>
           <span class="subs-qos">
             QoS {{ sub.qos }}
           </span>
@@ -140,6 +146,7 @@ export default {
 @import '@/assets/scss/variable.scss';
 
 .subscriptions {
+  width: 280px;
   color: $color-font-black-title;
   .subs-title {
     height: 49px;
@@ -162,6 +169,13 @@ export default {
       margin-bottom: 16px;
       position: relative;
       clear: both;
+      .subs-topic {
+        max-width: 164px;
+        display: inline-block;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
       .subs-qos {
         float: right;
         color: $color-bg--second-status;
