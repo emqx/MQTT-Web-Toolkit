@@ -16,9 +16,10 @@ const SHOW_CONNECTION_INFO = 'SHOW_CONNECTION_INFO'
 
 let storageConnections = JSON.parse(localStorage.getItem('connections')) || []
 storageConnections = storageConnections.map((row) => {
-  const { client, ...withoutClient } = row
+  const { client, messages, ...withoutClient } = row
   const newClient = { connected: false }
-  return { ...withoutClient, client: newClient }
+  const newMessages = []
+  return { ...withoutClient, client: newClient, messages: newMessages }
 })
 
 const storageShowConnectionInfo = JSON.parse(localStorage.getItem('showConnectionInfo')) || {}
