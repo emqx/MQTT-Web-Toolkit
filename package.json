@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "core-js": "^2.6.5",
-    "element-ui": "^2.12.0",
+    "element-ui": "^2.13.2",
     "jump.js": "^1.0.2",
     "moment": "^2.24.0",
     "mqtt": "^3.0.0",

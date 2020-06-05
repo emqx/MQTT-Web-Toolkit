@@ -30,9 +30,14 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item>
-          <el-button plain size="mini" class="sub-button"
-          v-loading="SubscribeLoading"
-          @click="subscribe">Subscribe</el-button>
+          <el-button
+            type="outline"
+            size="mini"
+            class="sub-button"
+            v-loading="SubscribeLoading"
+            @click="subscribe">
+            Subscribe
+          </el-button>
         </el-form-item>
       </el-form>
       <transition-group name="el-fade-in-linear">
@@ -184,7 +189,7 @@ export default {
         transition: all .5s;
         visibility: hidden;
         border-radius: 50%;
-        background: $color-main-green;
+        background: $color-main-red;
         position: absolute;
         right: -7px;
         top: -10px;
@@ -212,7 +217,6 @@ export default {
       }
       .el-input__inner {
         border-width: 2px;
-        border-radius: 0;
       }
     }
   }

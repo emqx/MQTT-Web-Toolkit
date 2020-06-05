@@ -1,0 +1,8 @@
+@import '@/assets/scss/variable.scss';
+
+/* Button */
+.el-button--outline {
+  background: var(--color-bg-normal);
+  border: 2px solid $color-main-green;
+  color: $color-main-green;
+}

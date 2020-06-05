@@ -1,4 +1,5 @@
 import '../assets/scss/element/element-variables.scss'
+import '../assets/scss/element/element-reset.scss'
 import CollapseTransition from 'element-ui/lib/transitions/collapse-transition';
 
 import {
@@ -21,8 +22,8 @@ import {
   // CheckboxButton,
   // CheckboxGroup,
   // Switch,
-  // Select,
-  // Option,
+  Select,
+  Option,
   // OptionGroup,
   Button,
   // ButtonGroup,
@@ -49,7 +50,7 @@ import {
   // Upload,
   // Progress,
   // Badge,
-  // Card,
+  Card,
   // Rate,
   // Steps,
   // Step,
@@ -93,8 +94,8 @@ export default (Vue) => {
   // Vue.use(CheckboxButton)
   // Vue.use(CheckboxGroup)
   // Vue.use(Switch)
-  // Vue.use(Select)
-  // Vue.use(Option)
+  Vue.use(Select)
+  Vue.use(Option)
   // Vue.use(OptionGroup)
   Vue.use(Button)
   // Vue.use(ButtonGroup)
@@ -121,7 +122,7 @@ export default (Vue) => {
   // Vue.use(Upload)
   // Vue.use(Progress)
   // Vue.use(Badge)
-  // Vue.use(Card)
+  Vue.use(Card)
   // Vue.use(Rate)
   // Vue.use(Steps)
   // Vue.use(Step)

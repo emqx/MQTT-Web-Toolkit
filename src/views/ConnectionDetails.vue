@@ -68,7 +68,8 @@
 <script>
 import { mapActions } from 'vuex'
 import mqtt from 'mqtt'
-import getNowDate from '@/utils/time'
+import time from '@/utils/time'
+import { getClientOptions } from '@/utils/mqttUtils'
 import ConnectionMsgLeft from '@/components/ConnectionMsgLeft.vue'
 import ConnectionMsgRight from '@/components/ConnectionMsgRight.vue'
 import ConnectionMsgPublish from '@/components/ConnectionMsgPublish.vue'
@@ -164,21 +165,9 @@ export default {
       this.$message.error('Connect Failed!')
     },
     createClient() {
-      const reconnectPeriod = 4000
-      const connectTimeout = 4000
-      const {
-        clientId, username, password, keepalive, clean,
-      } = this.activeConnection
       this.connectLoading = true
-      return mqtt.connect(this.connectUrl, {
-        clientId,
-        username,
-        password,
-        keepalive,
-        clean,
-        connectTimeout,
-        reconnectPeriod,
-      })
+      const options = getClientOptions(this.activeConnection)
+      return mqtt.connect(this.connectUrl, options)
     },
     getMessages() {
       this.messageType = 'All'
@@ -199,7 +188,7 @@ export default {
       return (topic, payload, packet = {}) => {
         const message = {
           out: false,
-          createAt: getNowDate(),
+          createAt: time.getNowDate(),
           topic,
           payload: payload.toString(),
           qos: packet.qos,
@@ -312,7 +301,6 @@ export default {
       float: right;
       .el-radio-button__inner {
         padding: 6px 15px;
-        border-radius: 0;
         width: 100px;
         border-width: 2px;
         background: $color-bg--main;
