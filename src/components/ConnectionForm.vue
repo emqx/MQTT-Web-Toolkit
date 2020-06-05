@@ -50,12 +50,19 @@
           <el-checkbox v-model="connection.ssl">SSL</el-checkbox>
         </el-col>
         <el-col :span="8">
-          <el-button v-if="!activeConnection.client.connected" plain size="mini"
+          <el-button
+            v-if="!activeConnection.client.connected"
+            type="outline"
+            size="mini"
             :loading="btnLoading"
             @click="confirm">
             Connect
           </el-button>
-          <el-button v-else class="disconnect" plain size="mini"
+          <el-button
+            v-else
+            plain
+            class="disconnect"
+            size="mini"
             :loading="btnLoading"
             @click="cancel">
             Disconnect
@@ -68,9 +75,9 @@
 
 
 <script>
-import uuidv1 from 'uuid/v1'
 import { mapActions } from 'vuex'
 import { validateConnectionName, validateClientId } from '@/utils/validateForm'
+import { getClientId } from '@/utils/mqttUtils'
 
 export default {
   name: 'connection-form',
@@ -98,7 +105,7 @@ export default {
         host: 'broker.emqx.io',
         port: 8083,
         path: '/mqtt',
-        clientId: this.getClientId(),
+        clientId: getClientId(),
         username: '',
         password: '',
         keepalive: 60,
@@ -153,36 +160,22 @@ export default {
         if (!valid) {
           return
         }
-        if (this.edit) {
-          this.EDIT_CONNECTION({ ...this.connection })
-          this.CHANGE_ACTIVE_CONNECTION({ ...this.connection })
-          this.open()
-          this.$emit('handleConnect')
-        } else {
-          const id = uuidv1()
-          this.CREATE_CONNECTION({ ...this.connection, id })
-          this.$router.push({ path: `/connections/${id}` })
-          this.SHOW_CONNECTION_INFO({ id, value: true })
-        }
+        this.EDIT_CONNECTION({ ...this.connection })
+        this.CHANGE_ACTIVE_CONNECTION({ ...this.connection })
+        this.open()
+        this.$emit('handleConnect')
       })
     },
     cancel() {
       this.$emit('handleDisconnect')
     },
-    getClientId() {
-      return `mqttjs_${Math.random().toString(16).substr(2, 8)}`
-    },
     refreshClientId() {
-      this.connection.clientId = this.getClientId()
+      this.connection.clientId = getClientId()
     },
     open() {
-      if (this.edit) {
-        this.connection = { ...this.activeConnection }
-        this.oldConnectionName = this.connection.name
-        this.oldClientId = this.connection.clientId
-      } else {
-        this.connection.clientId = this.getClientId()
-      }
+      this.connection = { ...this.activeConnection }
+      this.oldConnectionName = this.connection.name
+      this.oldClientId = this.connection.clientId
     },
   },
 }
@@ -207,9 +200,6 @@ export default {
         line-height: 28px;
         height: 28px;
       }
-      .el-input__inner {
-        border-radius: 0;
-      }
       .el-icon-refresh {
         cursor: pointer;
         color: $color-main-green;
@@ -219,11 +209,14 @@ export default {
       }
       .el-input-group__append {
         padding: 0;
-        border-radius: 0;
         border: none;
         width: 80px;
         .el-input__inner {
           padding-right: 8px;
+          border-top-right-radius: 4px;
+          border-bottom-right-radius: 4px;
+          border-top-left-radius: 0px;
+          border-bottom-left-radius: 0px;
         }
       }
     }
@@ -236,7 +229,7 @@ export default {
     }
     .disconnect.el-button {
       color: $color-main-red;
-      border-color: $color-main-red;
+      border: 2px solid $color-main-red;
     }
   }
 }

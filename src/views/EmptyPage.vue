@@ -4,7 +4,7 @@
       <img src="@/assets/images/no-connection.png">
     </div>
     <el-button
-      plain
+      type="outline"
       @click="$router.push({ path: '/connection/create' })">
       + New Connection
     </el-button>
@@ -37,13 +37,6 @@ export default {
   }
   .el-button {
     margin-top: 32px;
-    border: 2px solid $color-main-green;
-    color: $color-main-green;
-    border-radius: 0;
-    &:hover, &:focus {
-      border-color: $color-second-green;
-      color: $color-second-green;
-    }
   }
 }
 </style>

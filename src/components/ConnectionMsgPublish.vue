@@ -39,7 +39,7 @@
 <script>
 import jump from 'jump.js'
 import { mapActions } from 'vuex'
-import getNowDate from '@/utils/time'
+import time from '@/utils/time'
 
 export default {
   name: 'ConnectionMsgPublish',
@@ -86,7 +86,7 @@ export default {
         }
         const publishedMessage = {
           out: true,
-          createAt: getNowDate(),
+          createAt: time.getNowDate(),
           topic,
           payload,
           qos,
