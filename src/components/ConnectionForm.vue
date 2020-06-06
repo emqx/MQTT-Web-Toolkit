@@ -49,11 +49,12 @@
           <el-checkbox v-model="connection.clean">Clean Session</el-checkbox>
           <el-checkbox v-model="connection.ssl">SSL</el-checkbox>
         </el-col>
-        <el-col :span="8">
+        <div>
           <el-button
             v-if="!activeConnection.client.connected"
             type="outline"
             size="mini"
+            icon="el-icon-caret-right"
             :loading="btnLoading"
             @click="confirm">
             Connect
@@ -63,11 +64,22 @@
             plain
             class="disconnect"
             size="mini"
+            icon="el-icon-switch-button"
             :loading="btnLoading"
-            @click="cancel">
+            @click="disconnect">
             Disconnect
           </el-button>
-        </el-col>
+          <el-button
+            v-if="!activeConnection.client.connected && btnLoading"
+            class="disconnect cancel btn"
+            icon="el-icon-close"
+            plain
+            type="outline"
+            size="mini"
+            @click="cancel">
+            Cancel
+          </el-button>
+        </div>
       </el-row>
     </el-form>
   </div>
@@ -166,8 +178,11 @@ export default {
         this.$emit('handleConnect')
       })
     },
-    cancel() {
+    disconnect() {
       this.$emit('handleDisconnect')
+    },
+    cancel() {
+      this.$emit('handleCancel')
     },
     refreshClientId() {
       this.connection.clientId = getClientId()
@@ -230,6 +245,9 @@ export default {
     .disconnect.el-button {
       color: $color-main-red;
       border: 2px solid $color-main-red;
+    }
+    .cancel.el-button {
+      margin-right: 10px;
     }
   }
 }
