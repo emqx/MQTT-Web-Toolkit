@@ -69,7 +69,7 @@ import {
   Loading,
   // MessageBox,
   Message,
-  // Notification,
+  Notification,
   Divider,
 } from 'element-ui'
 
@@ -143,6 +143,7 @@ export default (Vue) => {
 
   const vue = Vue
   vue.prototype.$message = Message
+  vue.prototype.$notify = Notification
 
   Vue.component(CollapseTransition.name, CollapseTransition)
 }

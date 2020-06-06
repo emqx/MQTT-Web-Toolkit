@@ -18,7 +18,8 @@
           edit
           :btnLoading="connectLoading"
           @handleConnect="connect"
-          @handleDisconnect="disconnect">
+          @handleDisconnect="disconnect"
+          @handleCancel="cancel">
         </connection-form>
       </el-collapse-transition>
     </div>
@@ -124,6 +125,10 @@ export default {
       this.getMessages()
       this.openConnectionForm()
     },
+    cancel() {
+      this.connectLoading = false
+      this.activeConnection.client.end(true)
+    },
     connect() {
       if (this.connectLoading || this.activeConnection.client.connected) {
         return false
@@ -145,19 +150,41 @@ export default {
           subscriptions: [],
         })
         this.activeConnection.client.end()
-        this.$message.success('Disconnected')
+        this.$notify({
+          title: 'Disconnected',
+          message: '',
+          type: 'success',
+          duration: 3000,
+          offset: 30,
+        })
       }
     },
     onConnect() {
       this.connectLoading = false
-      this.$message.success('Connected')
+      this.$notify({
+        title: 'Connected',
+        message: '',
+        type: 'success',
+        duration: 3000,
+        offset: 30,
+      })
       setTimeout(() => {
         this.SHOW_CONNECTION_INFO({ id: this.$route.params.id, value: false })
       }, 500)
     },
-    onError() {
+    onError(error) {
       this.connectLoading = false
-      this.$message.error('Connect Failed!')
+      let msgTitle = 'Connect Failed!'
+      if (error) {
+        msgTitle = error
+      }
+      this.$notify({
+        title: msgTitle,
+        message: '',
+        type: 'error',
+        duration: 3000,
+        offset: 30,
+      })
     },
     onReConnect() {
       this.activeConnection.client.end()

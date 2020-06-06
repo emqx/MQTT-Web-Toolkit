@@ -7,11 +7,9 @@ import router from './router'
 import store from './store'
 import element from './utils/element'
 
-
 Vue.use(element, { locale })
 
 Vue.config.productionTip = false
-
 
 new Vue({
   router,
