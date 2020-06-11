@@ -326,15 +326,6 @@ export default {
     }
     .el-radio-group {
       float: right;
-      .el-radio-button__inner {
-        padding: 6px 15px;
-        width: 100px;
-        border-width: 2px;
-        background: $color-bg--main;
-      }
-      .el-radio-button__orig-radio:checked + .el-radio-button__inner {
-        color: $color-main-green;
-      }
     }
   }
   .message-list {
