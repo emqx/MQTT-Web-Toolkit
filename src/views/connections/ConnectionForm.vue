@@ -141,8 +141,13 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="2">
-                  <a href="javascript:;" class="icon-oper" @click="getFilePath('ca')">
+                  <a href="javascript:;" class="icon-oper file">
                     <i class="el-icon-folder-opened"></i>
+                    <input
+                      type="file"
+                      @change="getFilePath($event, 'ca')"
+                      accept=".crt, .key, .pem, .jks, .der, .cer, .pfx"
+                    />
                   </a>
                 </el-col>
                 <el-col :span="22">
@@ -151,8 +156,13 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="2">
-                  <a href="javascript:;" class="icon-oper" @click="getFilePath('cert')">
+                  <a href="javascript:;" class="icon-oper file">
                     <i class="el-icon-folder-opened"></i>
+                    <input
+                      type="file"
+                      @change="getFilePath($event, 'cert')"
+                      accept=".crt, .key, .pem, .jks, .der, .cer, .pfx"
+                    />
                   </a>
                 </el-col>
                 <el-col :span="22">
@@ -161,8 +171,13 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="2">
-                  <a href="javascript:;" class="icon-oper" @click="getFilePath('key')">
+                  <a href="javascript:;" class="icon-oper file">
                     <i class="el-icon-folder-opened"></i>
+                    <input
+                      type="file"
+                      @change="getFilePath($event, 'key')"
+                      accept=".crt, .key, .pem, .jks, .der, .cer, .pfx"
+                    />
                   </a>
                 </el-col>
                 <el-col :span="22">
@@ -438,9 +453,8 @@ export default class ConnectionCreate extends Vue {
 
   @Action('CHANGE_ACTIVE_CONNECTION') private changeActiveConnection!: (payload: Client) => void
   @Action('TOGGLE_ADVANCED_VISIBLE') private toggleAdvancedVisible!: (payload: { advancedVisible: boolean }) => void
-  @Action('TOGGLE_WILL_MESSAGE_VISIBLE') private toggleWillMessageVisible!: (payload: {
-    willMessageVisible: boolean
-  }) => void
+  @Action('TOGGLE_WILL_MESSAGE_VISIBLE')
+  private toggleWillMessageVisible!: (payload: { willMessageVisible: boolean }) => void
 
   private willMessageVisible = true
   private advancedVisible = true
@@ -566,18 +580,19 @@ export default class ConnectionCreate extends Vue {
     this.record.clientId = getClientId()
   }
 
-  private getFilePath(key: 'ca' | 'cert' | 'key') {
-    // remote.dialog.showOpenDialog(
-    //   {
-    //     properties: ['openFile'],
-    //     filters: [{ name: 'CA', extensions: ['crt', 'key', 'pem', 'jks', 'der', 'cer', 'pfx'] }],
-    //   },
-    //   (files) => {
-    //     if (files) {
-    //       this.record[key] = files[0]
-    //     }
-    //   },
-    // )
+  private getFilePath(e: MouseEvent, key: 'ca' | 'cert' | 'key') {
+    let file = e.target as HTMLInputElement
+    let vue = this
+    if (file.files) {
+      //读取本地文件
+      let reader = new FileReader()
+      reader.readAsText(file.files[0])
+      reader.onload = function () {
+        if (this.result) {
+          vue.record[key] = this.result as string
+        }
+      }
+    }
   }
 
   private handleSSL(val: boolean) {
@@ -688,6 +703,19 @@ export default class ConnectionCreate extends Vue {
       &:hover,
       &:focus {
         color: var(--color-main-green);
+      }
+      &.file {
+        position: relative;
+        input[type='file'] {
+          cursor: pointer;
+          font-size: 0;
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          right: 0;
+          top: 0;
+          opacity: 0;
+        }
       }
     }
     .el-form-item__error {
