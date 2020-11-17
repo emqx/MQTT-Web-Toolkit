@@ -1,7 +1,6 @@
 import Lowdb from 'lowdb'
 import LocalStorage from 'lowdb/adapters/LocalStorage'
 import LodashID from 'lodash-id'
-// import { app, remote } from 'electron'
 
 interface Schema {
   windowSize: {
