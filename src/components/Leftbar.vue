@@ -3,7 +3,7 @@
     <section class="leftbar-top">
       <div class="app-logo leftbar-item">
         <a :href="siteLink" target="_blank" rel="noopener noreferrer">
-          <img src="../assets/images/app-logo.png" alt="app-logo" />
+          <img src="../assets/images/logo.svg" alt="app-logo" />
         </a>
       </div>
       <div :class="[{ active: isConnection }, 'leftbar-item']">
@@ -70,7 +70,7 @@ export default class Leftbar extends Vue {
 
 .leftbar {
   position: fixed;
-  width: 80px;
+  width: 120px;
   top: 0;
   bottom: 0;
   background: var(--color-bg-leftbar);
@@ -115,8 +115,8 @@ export default class Leftbar extends Vue {
   .app-logo {
     margin-bottom: 35px;
     img {
-      width: 40px;
-      height: 40px;
+      width: 48px;
+      height: 48px;
     }
   }
 

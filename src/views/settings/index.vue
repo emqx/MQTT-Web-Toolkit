@@ -125,6 +125,12 @@ export default class Settings extends Vue {
   -khtml-user-select: none;
   user-select: none;
 
+  .settings-general,
+  .settings-appearance {
+    max-width: 836px;
+    margin: 0 auto;
+  }
+
   .settings-general {
     margin-top: 30px;
     margin-bottom: 80px;

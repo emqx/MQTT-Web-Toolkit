@@ -29,6 +29,20 @@ export default {
     en: 'Follow us on GitHub',
     ja: 'Githubでフォローする',
   },
+  mqttToolkit: {
+    zh: {
+      emqLink: 'https://www.emqx.io/cn/',
+      online: 'MQTT WebSocket Toolkit 是由 {0} 开源的支持浏览器访问的 MQTT 在线客户端工具。',
+    },
+    en: {
+      emqLink: 'https://www.emqx.io/',
+      online: 'MQTT WebSocket Toolkit is an MQTT online client tool that is open-sourced by {0}.',
+    },
+    ja: {
+      emqLink: 'https://www.emqx.io/',
+      online: 'MQTT WebSocket Toolkit is an MQTT online client tool that is open-sourced by {0}.',
+    },
+  },
   emqxDesc: {
     zh: '一款完全开源，高可用低时延的百万级分布式物联网 MQTT 5.0 消息服务器。',
     // tslint:disable-next-line:max-line-length

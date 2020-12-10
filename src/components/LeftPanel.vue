@@ -18,14 +18,18 @@ export default class LeftPanel extends Vue {}
 .left-panel {
   & > div {
     position: fixed;
-    left: 341px;
+    left: 441px;
     z-index: 1;
-    width: 230px;
+    width: 280px;
     background: var(--color-bg-normal);
     border-radius: 0;
     top: 0;
     bottom: 0;
     padding-bottom: 42px;
+    @media (min-width: 1920px) {
+      left: 761px;
+      width: 438px;
+    }
   }
 }
 .pop-enter-active {
@@ -40,7 +44,17 @@ export default class LeftPanel extends Vue {}
       left: 0;
     }
     to {
-      left: 341px;
+      left: 441px;
+    }
+  }
+  @media (min-width: 1920px) {
+    @keyframes leftbarPop {
+      from {
+        left: 0;
+      }
+      to {
+        left: 761px;
+      }
     }
   }
 }

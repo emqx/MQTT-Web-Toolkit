@@ -2,25 +2,21 @@
   <div class="about-view rightbar">
     <h1 class="titlebar">{{ $t('about.about') }}</h1>
     <div class="about-content">
-      <img class="logo" :src="logo" alt="mqttx" />
+      <img class="logo" :src="logo" alt="emqx" />
 
-      <p class="version">v1.3.3</p>
+      <h1 class="title">MQTT WebSocket Toolkit</h1>
 
-      <p class="about-help">
-        <a class="web-link" href="javascript:;" @click="checkUpdate">{{ $t('about.update') }}</a>
-        <a class="web-link" href="https://github.com/emqx/MQTTX/releases" target="_blank" rel="noopener noreferrer">
-          {{ $t('about.releases') }}
-        </a>
-        <a class="web-link" href="https://github.com/emqx/MQTTX/issues" target="_blank" rel="noopener noreferrer">
-          {{ $t('about.support') }}
-        </a>
-      </p>
+      <div class="emqx-desc">
+        <i18n path="about.mqttToolkit.online" tag="p">
+          <a :href="$t('about.mqttToolkit.emqLink')" target="_blank" rel="noopener noreferrer">EMQ</a>
+        </i18n>
+      </div>
 
       <div class="emqx-desc">
         <i18n path="about.emqxLocal.local" tag="span">
-          <a href="https://github.com/emqx/emqx" target="_blank" rel="noopener noreferrer">{{
-            $t('about.emqxLocal.emqx')
-          }}</a>
+          <a href="https://github.com/emqx/emqx" target="_blank" rel="noopener noreferrer">
+            {{ $t('about.emqxLocal.emqx') }}
+          </a>
         </i18n>
         <a v-if="getterLang !== 'zh'" href="https://github.com/emqx/emqx" target="_blank" rel="noopener noreferrer"
           >EMQ X</a
@@ -35,7 +31,11 @@
         </div>
       </div>
 
-      <el-button class="about-website github-btn" type="primary" @click="goToLink('https://github.com/emqx/MQTTX')">
+      <el-button
+        class="about-website github-btn"
+        type="primary"
+        @click="goToLink('https://github.com/emqx/MQTT-Web-Toolkit')"
+      >
         <i class="iconfont icon-github"></i> {{ $t('about.followGithub') }}
       </el-button>
     </div>
@@ -66,7 +66,7 @@
               <i class="iconfont icon-qq"></i>
             </span>
           </el-popover>
-          <el-popover placement="top-start" width="30" style="margin-left: 16px;" trigger="click">
+          <el-popover placement="top-start" width="30" style="margin-left: 16px" trigger="click">
             <img class="emqx-qq" src="../../assets/images/wx_qr_code.png" alt="qq" />
             <span class="follow-link" slot="reference">
               <i class="iconfont icon-we-chat"></i>
@@ -90,9 +90,9 @@ export default class About extends Vue {
 
   get logo(): string {
     if (this.getterTheme === 'light') {
-      return require('../../assets/images/mqttx-light.png')
+      return require('../../assets/images/logo.svg')
     }
-    return require('../../assets/images/mqttx-dark.png')
+    return require('../../assets/images/logo.svg')
   }
 
   get emqxWebsite(): string {
@@ -130,9 +130,13 @@ export default class About extends Vue {
   }
 
   .logo {
-    margin-bottom: 5px;
-    width: 320px;
-    height: 110px;
+    margin-bottom: 20px;
+    width: 100px;
+    height: 100px;
+  }
+
+  .title {
+    margin-bottom: 48px;
   }
 
   .version {
@@ -151,7 +155,8 @@ export default class About extends Vue {
   }
 
   .emqx-desc {
-    max-width: 560px;
+    max-width: 836px;
+    width: 100%;
     line-height: 1.6;
     margin-bottom: 12px;
   }
