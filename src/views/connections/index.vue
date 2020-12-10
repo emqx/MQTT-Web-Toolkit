@@ -148,14 +148,17 @@ export default class Connections extends Vue {
 }
 .leftList {
   position: fixed;
-  width: 260px;
-  left: 81px;
+  width: 320px;
+  left: 121px;
   top: 0;
   bottom: 0;
   overflow-x: hidden;
   z-index: 1000;
   border-right: 1px solid var(--color-border-default);
   background-color: var(--color-bg-primary);
+  @media (min-width: 1920px) {
+    width: 640px;
+  }
   .no-data {
     text-align: center;
     position: absolute;

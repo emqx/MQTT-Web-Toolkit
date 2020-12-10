@@ -106,11 +106,14 @@
       :style="{
         paddingTop: showClientInfo ? msgTop.open : msgTop.close,
         paddingBottom: `${msgBottom}px`,
-        marginLeft: showSubs ? '570px' : '341px',
+        marginLeft: showSubs ? (largeDesktop ? '1198px' : '720px') : largeDesktop ? '761px' : '441px',
       }"
     >
       <div class="connections-body">
-        <div class="filter-bar" :style="{ top: showClientInfo ? bodyTop.open : bodyTop.close }">
+        <div
+          class="filter-bar"
+          :style="{ top: showClientInfo ? bodyTop.open : bodyTop.close, left: largeDesktop ? '761px' : '441px' }"
+        >
           <span class="subs-title">
             {{ this.$t('connections.subscriptions') }}
             <a class="subs-btn" href="javascript:;" @click="handleShowSubs">
@@ -151,7 +154,10 @@
         </div>
       </div>
 
-      <div class="connections-footer" :style="{ marginLeft: showSubs ? '570px' : '341px' }">
+      <div
+        class="connections-footer"
+        :style="{ marginLeft: showSubs ? (largeDesktop ? '1198px' : '720px') : largeDesktop ? '761px' : '441px' }"
+      >
         <ResizeHeight v-model="inputHeight" />
         <MsgPublish
           :editor-height="inputHeight - 75"
@@ -231,6 +237,8 @@ export default class ConnectionsDetail extends Vue {
   }
 
   private showSubs = true
+  private largeDesktop = false
+  private screenWidth = document.body.clientWidth
   private showClientInfo = true
   private connectLoading = false
   private searchVisible = false
@@ -716,6 +724,16 @@ export default class ConnectionsDetail extends Vue {
     // })
   }
 
+  private mounted() {
+    this.largeDesktop = document.body.clientWidth >= 1920 ? true : false
+    window.onresize = () => {
+      return (() => {
+        this.screenWidth = document.body.clientWidth
+        this.largeDesktop = this.screenWidth >= 1920 ? true : false
+      })()
+    }
+  }
+
   private setClientsMessageListener() {
     // Register connected clients message event listeners
     Object.keys(this.activeConnection).forEach((connectionID: string) => {
@@ -857,7 +875,7 @@ export default class ConnectionsDetail extends Vue {
         padding: 12px 16px;
         background: var(--color-bg-primary);
         position: fixed;
-        left: 341px;
+        left: 441px;
         right: 0;
         z-index: 1;
         transition: all 0.4s;
@@ -879,13 +897,19 @@ export default class ConnectionsDetail extends Vue {
           @include flex-space-between;
           .received-type-select {
             width: 110px;
-            margin-left: 245px;
+            margin-left: 295px;
+            @media (min-width: 1920px) {
+              margin-left: 453px;
+            }
           }
           .icon-tip {
             position: absolute;
-            left: 239px;
+            left: 289px;
             font-size: 16px;
             color: var(--color-text-tips);
+            @media (min-width: 1920px) {
+              left: 447px;
+            }
           }
         }
       }
