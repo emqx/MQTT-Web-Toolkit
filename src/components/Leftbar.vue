@@ -42,8 +42,8 @@ export default class Leftbar extends Vue {
   @Getter('currentLang') private getterLang!: Language
 
   get siteLink(): string {
-    const link = 'https://mqttx.app/'
-    return this.getterLang === 'zh' ? `${link}/cn` : link
+    const link = 'https://www.emqx.io/'
+    return this.getterLang === 'zh' ? `${link}cn/` : link
   }
   get isConnection(): boolean {
     return 'recent_connections' === this.$route.path.split('/')[1]
@@ -70,7 +70,7 @@ export default class Leftbar extends Vue {
 
 .leftbar {
   position: fixed;
-  width: 120px;
+  width: 80px;
   top: 0;
   bottom: 0;
   background: var(--color-bg-leftbar);
@@ -123,6 +123,10 @@ export default class Leftbar extends Vue {
   .iconfont {
     color: var(--color-text-light);
     font-size: $font-size--leftbar_title;
+  }
+
+  @media (min-width: 1920px) {
+    width: 120px;
   }
 }
 </style>

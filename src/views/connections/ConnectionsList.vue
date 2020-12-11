@@ -129,10 +129,13 @@ export default class ConnectionsList extends Vue {
         font-size: $font-size--body;
         font-weight: 500;
         color: var(--color-text-title);
-        max-width: 180px;
+        max-width: 270px;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
+        @media (min-width: 1920px) {
+          max-width: 590px;
+        }
       }
     }
     .ssl-tag {

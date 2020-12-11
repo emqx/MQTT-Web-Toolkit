@@ -106,13 +106,13 @@
       :style="{
         paddingTop: showClientInfo ? msgTop.open : msgTop.close,
         paddingBottom: `${msgBottom}px`,
-        marginLeft: showSubs ? (largeDesktop ? '1198px' : '720px') : largeDesktop ? '761px' : '441px',
+        marginLeft: marginLeft,
       }"
     >
       <div class="connections-body">
         <div
           class="filter-bar"
-          :style="{ top: showClientInfo ? bodyTop.open : bodyTop.close, left: largeDesktop ? '761px' : '441px' }"
+          :style="{ top: showClientInfo ? bodyTop.open : bodyTop.close, left: largeDesktop ? '761px' : '401px' }"
         >
           <span class="subs-title">
             {{ this.$t('connections.subscriptions') }}
@@ -154,10 +154,7 @@
         </div>
       </div>
 
-      <div
-        class="connections-footer"
-        :style="{ marginLeft: showSubs ? (largeDesktop ? '1198px' : '720px') : largeDesktop ? '761px' : '441px' }"
-      >
+      <div class="connections-footer" :style="{ marginLeft: marginLeft }">
         <ResizeHeight v-model="inputHeight" />
         <MsgPublish
           :editor-height="inputHeight - 75"
@@ -323,6 +320,11 @@ export default class ConnectionsDetail extends Vue {
       url = `${url}${path.startsWith('/') ? '' : '/'}${path}`
     }
     return url
+  }
+
+  get marginLeft(): string {
+    const left = this.showSubs ? (this.largeDesktop ? '1198px' : '680px') : this.largeDesktop ? '761px' : '401px'
+    return left
   }
 
   @Watch('record')
