@@ -44,7 +44,7 @@
       <img class="emqx-logo" src="../../assets/images/emqx-logo.png" alt="emqx" width="35" />
       <span class="copyright"
         >Copyright &copy; 2020
-        <a :href="emqxWebsite" target="_blank" rel="noopener noreferrer"> EMQ X</a>
+        <a :href="emqxWebsite" target="_blank" rel="noopener noreferrer">EMQ</a>
       </span>
       <div class="follow-items">
         <a target="_blank" rel="noopener noreferrer" class="follow-link" href="https://twitter.com/emqtt">

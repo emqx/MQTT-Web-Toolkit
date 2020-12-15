@@ -27,8 +27,8 @@ export default class LeftPanel extends Vue {}
     bottom: 0;
     padding-bottom: 42px;
     @media (min-width: 1920px) {
-      left: 761px;
-      width: 438px;
+      left: 521px;
+      width: 400px;
     }
   }
 }
@@ -53,7 +53,7 @@ export default class LeftPanel extends Vue {}
         left: 0;
       }
       to {
-        left: 761px;
+        left: 521px;
       }
     }
   }
