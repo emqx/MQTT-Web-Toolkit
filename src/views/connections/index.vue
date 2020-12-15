@@ -158,7 +158,7 @@ export default class Connections extends Vue {
   background-color: var(--color-bg-primary);
   @media (min-width: 1920px) {
     left: 121px;
-    width: 640px;
+    width: 400px;
   }
   .no-data {
     text-align: center;

@@ -83,8 +83,12 @@ export default class ConnectionsList extends Vue {
   }
 
   private handleSelectConnection(row: ConnectionModel) {
-    this.unreadMessageIncrement({ id: row.id as string, unreadMessageCount: 0 })
+    this.initUnreadMessageCount(row.id as string)
     this.$router.push({ path: `/recent_connections/${row.id}` })
+  }
+
+  private initUnreadMessageCount(id: string) {
+    this.unreadMessageIncrement({ id, unreadMessageCount: 0 })
   }
 
   private handleContextMenu(row: ConnectionModel, event: MouseEvent) {
@@ -134,7 +138,7 @@ export default class ConnectionsList extends Vue {
         text-overflow: ellipsis;
         overflow: hidden;
         @media (min-width: 1920px) {
-          max-width: 590px;
+          max-width: 350px;
         }
       }
     }

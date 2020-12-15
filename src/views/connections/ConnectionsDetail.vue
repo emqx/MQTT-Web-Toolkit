@@ -112,7 +112,7 @@
       <div class="connections-body">
         <div
           class="filter-bar"
-          :style="{ top: showClientInfo ? bodyTop.open : bodyTop.close, left: largeDesktop ? '761px' : '401px' }"
+          :style="{ top: showClientInfo ? bodyTop.open : bodyTop.close, left: largeDesktop ? '521px' : '401px' }"
         >
           <span class="subs-title">
             {{ this.$t('connections.subscriptions') }}
@@ -323,7 +323,7 @@ export default class ConnectionsDetail extends Vue {
   }
 
   get marginLeft(): string {
-    const left = this.showSubs ? (this.largeDesktop ? '1198px' : '680px') : this.largeDesktop ? '761px' : '401px'
+    const left = this.showSubs ? (this.largeDesktop ? '920px' : '680px') : this.largeDesktop ? '521px' : '401px'
     return left
   }
 
@@ -901,7 +901,7 @@ export default class ConnectionsDetail extends Vue {
             width: 110px;
             margin-left: 295px;
             @media (min-width: 1920px) {
-              margin-left: 453px;
+              margin-left: 415px;
             }
           }
           .icon-tip {
@@ -910,7 +910,7 @@ export default class ConnectionsDetail extends Vue {
             font-size: 16px;
             color: var(--color-text-tips);
             @media (min-width: 1920px) {
-              left: 447px;
+              left: 409px;
             }
           }
         }

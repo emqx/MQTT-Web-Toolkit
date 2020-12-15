@@ -73,13 +73,13 @@ export default class Home extends Vue {
   }
   @media (min-width: 1920px) {
     .right-topbar {
-      left: 761px;
+      left: 521px;
     }
     .rightbar {
       margin-left: 121px;
     }
     .right-content {
-      margin-left: 761px;
+      margin-left: 521px;
     }
   }
 }
