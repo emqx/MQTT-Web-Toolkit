@@ -184,7 +184,7 @@ import {
   loadConnections,
 } from '@/utils/api/connection'
 import time from '@/utils/time'
-// import matchSearch from '@/utils/matchSearch'
+import matchSearch from '@/utils/matchSearch'
 import topicMatch, { matchTopicMethod } from '@/utils/topicMatch'
 import { getClientOptions, getMQTTProtocol } from '@/utils/mqttUtils'
 
@@ -452,12 +452,12 @@ export default class ConnectionsDetail extends Vue {
     this.getMessages()
     if (this.searchTopic !== '') {
       const $messages = _.cloneDeep(this.messages)
-      // const res = await matchSearch($messages, 'topic', this.searchTopic)
-      // if (res) {
-      //   this.messages = res.slice()
-      // } else {
-      //   this.messages = [].slice()
-      // }
+      const res = await matchSearch($messages, 'topic', this.searchTopic)
+      if (res) {
+        this.messages = res.slice()
+      } else {
+        this.messages = [].slice()
+      }
     }
   }
   private async handleTopicClick(sub: SubscriptionModel, reset: boolean) {
