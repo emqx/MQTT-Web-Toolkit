@@ -31,7 +31,7 @@ export default {
   },
   mqttToolkit: {
     zh: {
-      emqLink: 'https://www.emqx.io/cn/',
+      emqLink: 'https://www.emqx.cn/',
       online: 'MQTT WebSocket Toolkit 是由 {0} 开源的支持浏览器访问的 MQTT 在线客户端工具。',
     },
     en: {

@@ -54,9 +54,9 @@
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
     "monaco-editor-webpack-plugin": "^1.9.0",
-    "node-sass": "^4.9.0",
+    "node-sass": "^5.0.0",
     "prettier": "^2.0.5",
-    "sass-loader": "^7.3.1",
+    "sass-loader": "^10.1.1",
     "typescript": "^3.7.4",
     "vue-template-compiler": "^2.6.10"
   }
