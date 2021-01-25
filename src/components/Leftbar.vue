@@ -42,8 +42,7 @@ export default class Leftbar extends Vue {
   @Getter('currentLang') private getterLang!: Language
 
   get siteLink(): string {
-    const link = 'https://www.emqx.io/'
-    return this.getterLang === 'zh' ? `${link}cn/` : link
+    return this.getterLang === 'zh' ? 'https://www.emqx.cn/' : 'https://www.emqx.io/'
   }
   get isConnection(): boolean {
     return 'recent_connections' === this.$route.path.split('/')[1]

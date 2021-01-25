@@ -96,11 +96,7 @@ export default class About extends Vue {
   }
 
   get emqxWebsite(): string {
-    let url = 'https://www.emqx.io'
-    if (this.getterLang === 'zh') {
-      url = `${url}/cn/`
-    }
-    return url
+    return this.getterLang === 'zh' ? 'https://www.emqx.cn/' : 'https://www.emqx.io/'
   }
 
   private checkUpdate(): void {
