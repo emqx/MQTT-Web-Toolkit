@@ -6,14 +6,13 @@ const plugins = [
       styleLibraryName: 'theme-chalk',
     },
   ],
-];
+]
 if (process.env.NODE_ENV === 'development') {
-  plugins.push('dynamic-import-node');
+  plugins.push('dynamic-import-node')
 }
-
 module.exports = {
   presets: [
     '@vue/app',
   ],
   plugins,
-};
+}
