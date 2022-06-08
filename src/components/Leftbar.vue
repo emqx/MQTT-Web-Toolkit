@@ -3,7 +3,7 @@
     <section class="leftbar-top">
       <div class="app-logo leftbar-item">
         <a :href="siteLink" target="_blank" rel="noopener noreferrer">
-          <img src="../assets/images/logo.svg" alt="app-logo" />
+          <img src="../assets/images/app-logo.png" alt="app-logo" />
         </a>
       </div>
       <div :class="[{ active: isConnection }, 'leftbar-item']">
@@ -11,7 +11,7 @@
           <i class="iconfont icon-connections"></i>
         </a>
       </div>
-      <div class="leftbar-item">
+      <div :class="[{ active: isCreate }, 'leftbar-item']">
         <a href="javascript:;" @click="routeToPage('/recent_connections/0?oper=create')">
           <i class="iconfont icon-plus"></i>
         </a>
@@ -42,10 +42,13 @@ export default class Leftbar extends Vue {
   @Getter('currentLang') private getterLang!: Language
 
   get siteLink(): string {
-    return this.getterLang === 'zh' ? 'https://www.emqx.cn/' : 'https://www.emqx.io/'
+    return this.getterLang === 'zh' ? 'https://mqttx.app/zh' : 'https://mqttx.app/'
   }
   get isConnection(): boolean {
-    return 'recent_connections' === this.$route.path.split('/')[1]
+    return ['Connections', 'ConnectionDetails'].includes(this.$route.name || '') && this.$route.query.oper !== 'create'
+  }
+  get isCreate(): boolean {
+    return this.$route.name === 'ConnectionDetails' && this.$route.query.oper === 'create'
   }
   get isSettings(): boolean {
     return this.$route.path === '/settings'
@@ -72,7 +75,7 @@ export default class Leftbar extends Vue {
   width: 80px;
   top: 0;
   bottom: 0;
-  background: var(--color-bg-leftbar);
+  background: linear-gradient(135deg, var(--color-bg-leftbar_top) 0%, var(--color-bg-leftbar_bottom) 100%);
   padding: 45px 0;
   z-index: 1001;
   display: flex;
@@ -98,12 +101,12 @@ export default class Leftbar extends Vue {
     }
     &.active a {
       background-color: var(--color-bg-leftbar_item);
-      border-radius: 50%;
+      border-radius: 8px;
     }
     &.active a,
     a:hover {
       .iconfont {
-        color: var(--color-main-green);
+        color: var(--color-main-white);
       }
     }
     &:last-child {
@@ -114,8 +117,8 @@ export default class Leftbar extends Vue {
   .app-logo {
     margin-bottom: 35px;
     img {
-      width: 48px;
-      height: 48px;
+      width: 40px;
+      height: 40px;
     }
   }
 
