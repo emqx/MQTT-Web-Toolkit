@@ -29,19 +29,22 @@ export default class EmptyPage extends Vue {
 
 <style lang="scss" scoped>
 .empty-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
   .empty-page__block {
-    .primary-btn {
-      background: linear-gradient(134deg, #37dc85 0%, #35ca8d 100%);
-      color: #fff;
-      border: 1px solid #37dc85;
-    }
+    text-align: center;
     img {
       width: 397px;
       height: 177px;
       margin-bottom: 20px;
     }
-    text-align: center;
-    padding-top: 30%;
+    .primary-btn {
+      background: linear-gradient(134deg, #37dc85 0%, #35ca8d 100%);
+      color: #fff;
+      border: 1px solid #37dc85;
+    }
     p {
       margin: 32px auto;
       max-width: 650px;
