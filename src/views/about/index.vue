@@ -1,78 +1,62 @@
 <template>
   <div class="about-view rightbar">
     <h1 class="titlebar">{{ $t('about.about') }}</h1>
-    <div class="about-content">
-      <img class="logo" :src="logo" alt="emqx" />
-
-      <h1 class="title">MQTT WebSocket Toolkit</h1>
-
-      <div class="emqx-desc">
-        <i18n path="about.mqttToolkit.online" tag="p">
-          <a :href="$t('about.mqttToolkit.emqLink')" target="_blank" rel="noopener noreferrer">EMQ</a>
-        </i18n>
+    <div class="about-block">
+      <div class="about-logo">
+        <img :src="mqttxLogoSrc" alt="mqttx-app-logo" width="200" height="192" />
       </div>
-
-      <div class="emqx-desc">
-        <i18n path="about.emqxLocal.local" tag="span">
-          <a href="https://github.com/emqx/emqx" target="_blank" rel="noopener noreferrer">
-            {{ $t('about.emqxLocal.emqx') }}
-          </a>
-        </i18n>
-        <a v-if="getterLang !== 'zh'" href="https://github.com/emqx/emqx" target="_blank" rel="noopener noreferrer"
-          >EMQ X</a
-        >
-        {{ $t('about.emqxDesc') }}
-      </div>
-
-      <div class="emqx-desc">
-        {{ $t('about.emqxDocker') }}
-        <div class="docker-code">
-          docker run -d --name emqx -p 1883:1883 -p 8083:8083 -p 8883:8883 -p 8084:8084 -p 18083:18083 emqx/emqx
+      <div class="about-content">
+        <div class="about-content__header">
+          <div class="description">
+            <p>{{ $t('about.mqttxDesc') }}</p>
+          </div>
+          <div class="btns">
+            <el-button class="link-btn" type="primary" @click="goToLink('https://github.com/emqx/MQTTX')">
+              <i class="iconfont icon-github"></i>
+              GitHub →
+            </el-button>
+            <el-button class="link-btn" type="primary" @click="goToLink(mqttxWebsite)">
+              <i class="iconfont icon-website"></i>
+              {{ $t('about.web') }} →
+            </el-button>
+            <el-button class="link-btn" type="primary" @click="goToLink(`${mqttxWebsite}/docs/faq`)">
+              <i class="iconfont icon-faq"></i>
+              FAQ →
+            </el-button>
+          </div>
+          <div class="emqx-cloud">
+            <h2>{{ $t('about.cloudTitle') }}</h2>
+            <p>{{ $t('about.cloudSummary') }}</p>
+            <el-button class="try-cloud-btn" type="primary" @click="goToLink(emqxCloudWebsite)">
+              {{ $t('about.tryCloud') }} →
+            </el-button>
+          </div>
         </div>
-      </div>
-
-      <el-button
-        class="about-website github-btn"
-        type="primary"
-        @click="goToLink('https://github.com/emqx/MQTT-Web-Toolkit')"
-      >
-        <i class="iconfont icon-github"></i> {{ $t('about.followGithub') }}
-      </el-button>
-    </div>
-
-    <div class="about-footer">
-      <img class="emqx-logo" src="../../assets/images/emqx-logo.png" alt="emqx" width="35" />
-      <span class="copyright"
-        >Copyright &copy; 2020
-        <a :href="emqxWebsite" target="_blank" rel="noopener noreferrer">EMQ</a>
-      </span>
-      <div class="follow-items">
-        <a target="_blank" rel="noopener noreferrer" class="follow-link" href="https://twitter.com/emqtt">
-          <i class="iconfont icon-ttww"></i>
-        </a>
-        <a target="_blank" rel="noopener noreferrer" class="follow-link" href="https://slack-invite.emqx.io/">
-          <i class="iconfont icon-slack"></i>
-        </a>
-        <a target="_blank" rel="noopener noreferrer" class="follow-link" href="https://www.reddit.com/r/emqx/">
-          <i class="iconfont icon-reddit"></i>
-        </a>
-        <template v-if="getterLang === 'zh'">
-          <a target="_blank" rel="noopener noreferrer" class="follow-link" href="https://weibo.com/emqtt">
-            <i class="iconfont icon-weibo"></i>
-          </a>
-          <el-popover placement="top-start" width="30" trigger="click">
-            <img class="emqx-qq" src="../../assets/images/qq-qr_code.png" alt="qq" />
-            <span class="follow-link" slot="reference">
-              <i class="iconfont icon-qq"></i>
+        <div class="about-content__footer">
+          <div class="emq-logo">
+            <img :src="emqLogoSrc" alt="emqx" width="40" />
+            <span class="copyright">
+              &copy;2022 <a :href="emqWebsite" target="_blank" rel="noopener noreferrer">EMQ</a> Technologies Co., Ltd.
             </span>
-          </el-popover>
-          <el-popover placement="top-start" width="30" style="margin-left: 16px" trigger="click">
-            <img class="emqx-qq" src="../../assets/images/wx_qr_code.png" alt="qq" />
-            <span class="follow-link" slot="reference">
-              <i class="iconfont icon-we-chat"></i>
-            </span>
-          </el-popover>
-        </template>
+          </div>
+          <div class="follow-items">
+            <a target="_blank" rel="noopener noreferrer" class="follow-link" href="https://twitter.com/EMQTech">
+              <i class="iconfont icon-ttww"></i>
+            </a>
+            <a target="_blank" rel="noopener noreferrer" class="follow-link" href="https://discord.gg/xYGf3fQnES">
+              <i class="iconfont icon-discord"></i>
+            </a>
+            <a target="_blank" rel="noopener noreferrer" class="follow-link" href="https://slack-invite.emqx.io/">
+              <i class="iconfont icon-slack"></i>
+            </a>
+            <el-popover v-if="getterLang === 'zh'" placement="top-start" width="30" trigger="click">
+              <img class="emqx-wechat" src="@/assets/images/wx_qr_code.png" alt="qq" />
+              <span class="follow-link" slot="reference">
+                <i class="iconfont icon-we-chat"></i>
+              </span>
+            </el-popover>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -81,26 +65,51 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { Getter } from 'vuex-class'
-// import { ipcRenderer } from 'electron'
 
 @Component
 export default class About extends Vue {
   @Getter('currentTheme') private getterTheme!: Theme
   @Getter('currentLang') private getterLang!: Language
 
-  get logo(): string {
+  private baseUrl = 'https://www.emqx.com'
+  private utm = '?utm_source=mqttx&utm_medium=referral&utm_campaign='
+
+  get mqttxLogoSrc(): string {
     if (this.getterTheme === 'light') {
-      return require('../../assets/images/logo.svg')
+      return require('@/assets/images/mqttx-dark.png')
     }
-    return require('../../assets/images/logo.svg')
+    return require('@/assets/images/mqttx-light.png')
   }
 
-  get emqxWebsite(): string {
-    return this.getterLang === 'zh' ? 'https://www.emqx.cn/' : 'https://www.emqx.io/'
+  get emqLogoSrc(): string {
+    if (this.getterTheme === 'light') {
+      return require('@/assets/images/emq-logo-dark.png')
+    }
+    return require('@/assets/images/emq-logo-light.png')
   }
 
-  private checkUpdate(): void {
-    // ipcRenderer.send('checkUpdate')
+  get emqWebsite(): string {
+    const lang = this.getterLang === 'zh' ? 'zh' : 'en'
+    return `${this.baseUrl}/${lang}${this.utm}mqttx-to-homepage`
+  }
+
+  get emqxCloudWebsite(): string {
+    const lang = this.getterLang === 'zh' ? 'zh' : 'en'
+    return `${this.baseUrl}/${lang}/cloud${this.utm}mqttx-to-cloud`
+  }
+
+  get emqxIoWebsite(): string {
+    const baseUrl = 'https://www.emqx.io/'
+    const lang = this.getterLang === 'zh' ? 'zh' : 'en'
+    if (lang === 'zh') {
+      return `${baseUrl}zh${this.utm}mqttx-to-broker`
+    }
+    return `${baseUrl}${this.utm}mqttx-to-broker`
+  }
+
+  get mqttxWebsite(): string {
+    const link = 'https://mqttx.app'
+    return this.getterLang === 'zh' ? `${link}/zh` : link
   }
 
   private goToLink(url: string) {
@@ -117,101 +126,103 @@ export default class About extends Vue {
   position: relative;
   padding: 0 16px;
 
-  & > .about-content {
-    height: 78%;
+  & > .about-block {
+    height: 86%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
-  }
-
-  .logo {
-    margin-bottom: 20px;
-    width: 100px;
-    height: 100px;
-  }
-
-  .title {
-    margin-bottom: 48px;
-  }
-
-  .version {
-    font-size: 1.25rem;
-    margin-bottom: 15px;
-  }
-
-  .about-help {
-    .web-link {
-      margin-right: 25px;
-      &:last-child {
-        margin-right: 0px;
+    .about-logo {
+      margin-left: 60px;
+      img {
+        max-width: none;
       }
     }
-    margin-bottom: 35px;
-  }
-
-  .emqx-desc {
-    max-width: 836px;
-    width: 100%;
-    line-height: 1.6;
-    margin-bottom: 12px;
-  }
-  .docker-code {
-    background: var(--color-bg-code);
-    padding: 10px;
-    border-radius: 4px;
-    user-select: all;
-    margin-top: 8px;
-  }
-
-  .github-btn {
-    font-size: 1rem;
-    margin-top: 35px;
-  }
-
-  .about-website {
-    margin-bottom: 35px;
-    .iconfont {
-      font-size: 1.25rem;
-      position: relative;
-      top: 2px;
-      margin-right: 3px;
-    }
-  }
-
-  .about-footer {
-    margin-top: 40px;
-    position: absolute;
-    bottom: 20px;
-    left: 16px;
-    right: 16px;
-    .emqx-logo {
-      position: absolute;
-      top: 5px;
-    }
-    .copyright {
-      position: absolute;
-      left: 45px;
-      top: 10px;
-    }
-    .follow-items {
-      float: right;
-      .follow-link {
-        cursor: pointer;
-        display: inline-block;
-        width: 50px;
-        height: 40px;
-        text-align: center;
-        line-height: 42px;
-        background: var(--color-bg-follows);
-        color: var(--color-text-default);
-        margin-right: 16px;
-        border-radius: 4px;
-        &:last-child {
-          margin-right: 0px;
+    .about-content {
+      max-width: 700px;
+      margin-left: 120px;
+      margin-right: 60px;
+      .description {
+        max-width: 560px;
+        line-height: 1.6;
+        margin-bottom: 24px;
+      }
+      .btns {
+        margin-top: 24px;
+        margin-bottom: 64px;
+        display: flex;
+        align-items: center;
+        .el-button + .el-button {
+          margin-left: 24px;
         }
-        .iconfont {
-          font-size: 20px;
+        .link-btn {
+          padding: 12px 24px;
+          min-width: 160px;
+          font-weight: 500;
+          font-size: 0.875rem;
+          color: var(--color-main-green);
+          border: none;
+          border-radius: 8px;
+          background: var(--color-bg-card-normal);
+          span {
+            display: flex;
+            align-items: center;
+          }
+          i {
+            margin-right: 6px;
+            color: var(--color-text-card_icon);
+            font-size: 24px;
+          }
+        }
+      }
+      .emqx-cloud {
+        margin-bottom: 64px;
+        padding: 20px 40px;
+        text-align: center;
+        border-radius: 8px;
+        background: var(--color-bg-card-gradient);
+        h2 {
+          margin-bottom: 16px;
+          font-size: 1.125rem;
+        }
+        p {
+          margin-bottom: 16px;
+        }
+        .try-cloud-btn {
+          padding: 10px 24px;
+          border: none;
+          border-radius: 8px;
+          background: var(--color-bg-btn-gradient);
+        }
+      }
+      .about-content__header {
+        border-bottom: 1px solid var(--color-border-default);
+      }
+      .about-content__footer {
+        margin-top: 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        .emq-logo {
+          img {
+            margin-right: 6px;
+          }
+        }
+        .follow-items {
+          float: right;
+          .follow-link {
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            color: var(--color-text-light);
+            margin-right: 16px;
+            &:last-child {
+              margin-right: 0px;
+            }
+            .iconfont {
+              font-size: 20px;
+            }
+          }
         }
       }
     }

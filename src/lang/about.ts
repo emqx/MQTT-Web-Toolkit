@@ -24,49 +24,28 @@ export default {
     en: 'Releases',
     ja: 'リリース履歴',
   },
-  followGithub: {
-    zh: '在 GitHub 上关注我们',
-    en: 'Follow us on GitHub',
-    ja: 'Githubでフォローする',
-  },
-  mqttToolkit: {
-    zh: {
-      emqLink: 'https://www.emqx.cn/',
-      online: 'MQTT WebSocket Toolkit 是由 {0} 开源的支持浏览器访问的 MQTT 在线客户端工具。',
-    },
-    en: {
-      emqLink: 'https://www.emqx.io/',
-      online: 'MQTT WebSocket Toolkit is an MQTT online client tool that is open-sourced by {0}.',
-    },
-    ja: {
-      emqLink: 'https://www.emqx.io/',
-      online: 'MQTT WebSocket Toolkit is an MQTT online client tool that is open-sourced by {0}.',
-    },
-  },
-  emqxDesc: {
-    zh: '一款完全开源，高可用低时延的百万级分布式物联网 MQTT 5.0 消息服务器。',
-    // tslint:disable-next-line:max-line-length
+  mqttxDesc: {
+    zh: 'MQTT X 是一款由 EMQ 开源的 MQTT 5.0 跨平台桌面客户端，旨在帮助开发者更快的开发、调试 MQTT 服务和应用。',
     en:
-      'is a fully open source, highly scalable, highly available distributed MQTT 5.0 messaging broker for IoT, M2M and mobile applications.',
-    ja: '完全なオープンソース、高可用性、低レイテンシのミリオンレベルの分散型IoT MQTT 5.0メッセージサーバ。',
+      'MQTT X is a cross-platform MQTT 5.0 client tool open-sourced by EMQ, designed to help develop and debug MQTT services and applications faster.',
+    ja:
+      'MQTT Xは、EMQによるオープンソースのMQTT 5.0クロスプラットフォーム・デスクスクライアントで、開発者がMQTTサービスおよびアプリケーションをより速く開発およびデバッグできるよう設計されています。',
   },
-  emqxLocal: {
-    zh: {
-      emqx: 'EMQ X',
-      local: '如需本地运行 MQTT Broker 推荐使用 {0}：',
-    },
-    en: {
-      emqx: 'EMQ X',
-      local: 'To run MQTT Broker locally, {0} is recommended. ',
-    },
-    ja: {
-      emqx: 'EMQ X',
-      local: 'ローカルでMQTT Brokerを利用するように{0}が薦められる',
-    },
+  cloudTitle: {
+    zh: '需要一个专属的 MQTT 服务器？',
+    en: 'Need a dedicated MQTT server?',
+    ja: '専用のMQTTサーバーが必要ですか？',
   },
-  emqxDocker: {
-    zh: '使用 Docker 安装 EMQ X：',
-    en: 'Install EMQ X by using Docker:',
-    ja: 'DockerでEMQ Xをインストール',
+  cloudSummary: {
+    zh: 'EMQX Cloud 是由 EMQ 提供的全托管 MQTT 云服务平台，可连接海量物联网设备并实时处理数据，且支持按量付费。',
+    en:
+      'EMQX Cloud is a fully managed MQTT cloud service platform provided by EMQ that connects massive amounts of IoT devices and processes data in real-time with pay-per-use support.',
+    ja:
+      'EMQX Cloudは、EMQが提供する、膨大な数のIoTデバイスを接続し、リアルタイムにデータ処理を行うフルマネージドMQTTクラウドサービスプラットフォームで、従量課金制に対応しているのが特徴です。',
+  },
+  tryCloud: {
+    zh: '免费试用 EMQX Cloud',
+    en: 'Try EMQX Cloud for free',
+    ja: 'EMQX Cloudの無料体験',
   },
 }

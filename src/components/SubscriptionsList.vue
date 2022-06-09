@@ -202,7 +202,7 @@ export default class SubscriptionsList extends Vue {
           return false
         }
 
-        if (res.length < 1 || ![0, 1, 2].includes(res[0].qos)) {
+        if (!res || res.length < 1 || ![0, 1, 2].includes(res[0].qos)) {
           this.$message.error(this.$t('connections.subFailed') as string)
           return false
         }
