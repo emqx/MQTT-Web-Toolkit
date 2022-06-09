@@ -8,12 +8,12 @@
       </div>
       <div :class="[{ active: isConnection }, 'leftbar-item']">
         <a href="javascript:;" @click="routeToPage('/recent_connections')">
-          <i class="iconfont icon-connections"></i>
+          <i class="iconfont icon-connect"></i>
         </a>
       </div>
       <div :class="[{ active: isCreate }, 'leftbar-item']">
         <a href="javascript:;" @click="routeToPage('/recent_connections/0?oper=create')">
-          <i class="iconfont icon-plus"></i>
+          <i class="iconfont icon-new"></i>
         </a>
       </div>
     </section>

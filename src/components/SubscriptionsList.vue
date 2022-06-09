@@ -15,7 +15,7 @@
             {{ $t('connections.newSubscription') }}
           </a>
           <a class="hide-btn" href="javascript:;" @click="hideSubsList">
-            <i class="iconfont icon-zhedie"></i>
+            <i class="iconfont icon-collapse"></i>
           </a>
         </div>
         <div
@@ -164,7 +164,7 @@ export default class SubscriptionsList extends Vue {
     if ($index === 0) {
       return this.predefineColors[0]
     }
-    const subIndex = this.predefineColors.findIndex(color => color === lastSubs.color)
+    const subIndex = this.predefineColors.findIndex((color) => color === lastSubs.color)
     if (this.predefineColors[subIndex + 1]) {
       $index = subIndex + 1
     } else {
@@ -195,13 +195,13 @@ export default class SubscriptionsList extends Vue {
       }
       const { topic, qos } = this.subRecord
       this.subRecord.color = this.topicColor || this.getBorderColor()
-      
+
       this.currentConnection.client.subscribe(topic, { qos }, (error: string, res: SubscriptionModel[]) => {
         if (error) {
           this.$message.error(error)
           return false
         }
-        
+
         if (res.length < 1 || ![0, 1, 2].includes(res[0].qos)) {
           this.$message.error(this.$t('connections.subFailed') as string)
           return false
@@ -356,7 +356,7 @@ export default class SubscriptionsList extends Vue {
       .close {
         display: none;
         border-radius: 50%;
-        background: var(--color-second-red);
+        background: var(--color-minor-red);
         position: absolute;
         right: -5px;
         top: -5px;
