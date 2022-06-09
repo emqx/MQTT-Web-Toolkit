@@ -16,6 +16,9 @@ body.dark {
   --color-bg-code: #38404a;
   --color-bg-input_btn: transparent;
   --color-bg-radio: #37363d80;
+  --color-bg-card-normal: #34363c;
+  --color-bg-card-gradient: linear-gradient(33deg, #27393c 0%, #2c2f3e 100%);
+  --color-bg-btn-gradient: linear-gradient(90deg, #35c98d 0%, #37dc85 100%);
 
   /* Font color */
   --color-text-title: #ffffff;
@@ -25,6 +28,7 @@ body.dark {
   --color-text-right_block: #484848;
   --color-text-right_info: #959599;
   --color-text-left_info: #959599;
+  --color-text-card_icon: #eaebec;
 
   /* Accent color */
   --color-main-green: #34c388;
