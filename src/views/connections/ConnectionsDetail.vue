@@ -25,7 +25,7 @@
                 :content="$t('connections.disconnectedBtn')"
               >
                 <a class="disconnect-btn" href="javascript:;" @click="disconnect">
-                  <i class="iconfont el-icon-switch-button"></i>
+                  <i class="iconfont icon-disconnect"></i>
                 </a>
               </el-tooltip>
             </transition>
@@ -40,19 +40,19 @@
                 href="javascript:;"
                 @click="handleEdit($route.params.id)"
               >
-                <i class="iconfont el-icon-edit-outline"></i>
+                <i class="iconfont icon-edit"></i>
               </a>
             </el-tooltip>
             <el-dropdown class="connection-oper" trigger="click" @command="handleCommand">
               <a href="javascript:;">
                 <i class="el-icon-more"></i>
               </a>
-              <el-dropdown-menu slot="dropdown">
+              <el-dropdown-menu class="connection-oper-item" slot="dropdown">
                 <el-dropdown-item command="searchByTopic">
                   <i class="iconfont icon-search"></i>{{ $t('connections.searchByTopic') }}
                 </el-dropdown-item>
                 <el-dropdown-item command="clearHistory">
-                  <i class="iconfont icon-clear"></i>{{ $t('connections.clearHistory') }}
+                  <i class="iconfont icon-a-clearhistory"></i>{{ $t('connections.clearHistory') }}
                 </el-dropdown-item>
                 <el-dropdown-item command="disconnect" :disabled="!client.connected">
                   <i class="iconfont icon-disconnect"></i>{{ $t('connections.disconnect') }}
@@ -117,7 +117,7 @@
           <span class="subs-title">
             {{ this.$t('connections.subscriptions') }}
             <a class="subs-btn" href="javascript:;" @click="handleShowSubs">
-              <i class="iconfont icon-zhedie"></i>
+              <i class="iconfont icon-collapse"></i>
             </a>
           </span>
           <div class="message-type">
@@ -807,18 +807,21 @@ export default class ConnectionsDetail extends Vue {
       }
       .connection-tail {
         i {
-          font-size: 18px;
+          font-size: 20px;
+          color: var(--color-text-title);
         }
         .disconnect-btn {
-          margin-right: 10px;
-          color: var(--color-second-red);
+          margin-right: 12px;
+          i {
+            color: var(--color-minor-red);
+          }
         }
         .edit-btn {
           &.disabled {
             cursor: not-allowed;
             color: var(--color-text-light);
           }
-          margin-right: 10px;
+          margin-right: 12px;
         }
         .el-dropdown.connection-oper {
           a {
@@ -890,7 +893,7 @@ export default class ConnectionsDetail extends Vue {
           position: relative;
           top: 1px;
           left: 3px;
-          .icon-zhedie {
+          .icon-collapse {
             display: inline-block;
             transform: rotate(180deg);
           }
@@ -926,11 +929,31 @@ export default class ConnectionsDetail extends Vue {
     }
   }
 }
+.connection-oper-item.el-dropdown-menu {
+  .iconfont {
+    font-size: 18px;
+  }
+  .el-dropdown-menu__item {
+    display: flex;
+    align-items: center;
+    .iconfont {
+      margin-right: 8px;
+    }
+  }
+  li.delete-item {
+    display: block;
+    color: var(--color-minor-red);
+    &:hover {
+      color: var(--color-minor-red);
+      background: var(--color-light-red);
+    }
+  }
+}
 .el-popper li.delete-item {
-  color: var(--color-second-red);
+  color: var(--color-minor-red);
   &:hover {
-    color: var(--color-second-red);
-    background: var(--color-third-red);
+    color: var(--color-minor-red);
+    background: var(--color-light-red);
   }
 }
 </style>
